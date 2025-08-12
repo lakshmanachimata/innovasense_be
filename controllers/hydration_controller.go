@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"innovasense_be/middleware"
 	"innovasense_be/models"
 	"innovasense_be/services"
-	"innovasense_be/middleware"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -49,10 +50,14 @@ func (c *HydrationController) InnovoHydration(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Invalid request data",
+			Message: "Invalid request data: " + err.Error(),
 		})
 		return
 	}
+
+	// Debug: Log the received request
+	log.Printf("Received request: %+v", req)
+	log.Printf("JWT Claims - CNumber: %s, Username: %s", claims.CNumber, claims.UserName)
 
 	// Validate cnumber and username from request body against JWT claims
 	if req.CNumber != claims.CNumber {
@@ -139,10 +144,14 @@ func (c *HydrationController) NewInnovoHydration(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Invalid request data",
+			Message: "Invalid request data: " + err.Error(),
 		})
 		return
 	}
+
+	// Debug: Log the received request
+	log.Printf("Received request: %+v", req)
+	log.Printf("JWT Claims - CNumber: %s, Username: %s", claims.CNumber, claims.UserName)
 
 	// Validate cnumber and username from request body against JWT claims
 	if req.CNumber != claims.CNumber {

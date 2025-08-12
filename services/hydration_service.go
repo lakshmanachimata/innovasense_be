@@ -160,11 +160,30 @@ func (s *HydrationService) GetHydrationDataByID(id int) (*models.HydrationData, 
 	`
 
 	var data models.HydrationData
+	var creationDatetimeStr string
 	err := s.db.QueryRow(query, id).Scan(&data.ID, &data.UserID, &data.Weight, &data.Height,
 		&data.SweatPosition, &data.TimeTaken, &data.BMI, &data.TBSA, &data.ImagePath,
-		&data.SweatRate, &data.SweatLoss, &data.DeviceType, &data.ImageID, &data.CreationDatetime)
+		&data.SweatRate, &data.SweatLoss, &data.DeviceType, &data.ImageID, &creationDatetimeStr)
 	if err != nil {
 		return nil, err
+	}
+
+	// Parse creation_datetime from string to time.Time
+	if creationDatetimeStr != "" {
+		// Try multiple time formats
+		formats := []string{
+			"2006-01-02 15:04:05",
+			"2006-01-02T15:04:05Z",
+			"2006-01-02T15:04:05.000Z",
+			"2006-01-02 15:04:05.000",
+		}
+
+		for _, format := range formats {
+			if parsedTime, err := time.Parse(format, creationDatetimeStr); err == nil {
+				data.CreationDatetime = parsedTime
+				break
+			}
+		}
 	}
 
 	return &data, nil
@@ -273,12 +292,32 @@ func (s *HydrationService) GetHydrationHistory(userID int, fromDate, toDate stri
 	var data []models.HydrationData
 	for rows.Next() {
 		var item models.HydrationData
+		var creationDatetimeStr string
 		err := rows.Scan(&item.ID, &item.UserID, &item.Weight, &item.Height, &item.SweatPosition,
 			&item.TimeTaken, &item.BMI, &item.TBSA, &item.ImagePath, &item.SweatRate,
-			&item.SweatLoss, &item.DeviceType, &item.ImageID, &item.CreationDatetime)
+			&item.SweatLoss, &item.DeviceType, &item.ImageID, &creationDatetimeStr)
 		if err != nil {
 			return nil, err
 		}
+
+		// Parse creation_datetime from string to time.Time
+		if creationDatetimeStr != "" {
+			// Try multiple time formats
+			formats := []string{
+				"2006-01-02 15:04:05",
+				"2006-01-02T15:04:05Z",
+				"2006-01-02T15:04:05.000Z",
+				"2006-01-02 15:04:05.000",
+			}
+
+			for _, format := range formats {
+				if parsedTime, err := time.Parse(format, creationDatetimeStr); err == nil {
+					item.CreationDatetime = parsedTime
+					break
+				}
+			}
+		}
+
 		data = append(data, item)
 	}
 
@@ -305,10 +344,30 @@ func (s *HydrationService) GetElectrolyteHistory(userID int, fromDate, toDate st
 	var data []models.ElectrolyteHistoryData
 	for rows.Next() {
 		var item models.ElectrolyteHistoryData
-		err := rows.Scan(&item.CreationDatetime, &item.ImageID)
+		var creationDatetimeStr string
+		err := rows.Scan(&creationDatetimeStr, &item.ImageID)
 		if err != nil {
 			return nil, err
 		}
+
+		// Parse creation_datetime from string to time.Time
+		if creationDatetimeStr != "" {
+			// Try multiple time formats
+			formats := []string{
+				"2006-01-02 15:04:05",
+				"2006-01-02T15:04:05Z",
+				"2006-01-02T15:04:05.000Z",
+				"2006-01-02 15:04:05.000",
+			}
+
+			for _, format := range formats {
+				if parsedTime, err := time.Parse(format, creationDatetimeStr); err == nil {
+					item.CreationDatetime = parsedTime
+					break
+				}
+			}
+		}
+
 		data = append(data, item)
 	}
 
@@ -391,12 +450,32 @@ func (s *HydrationService) GetClientHistory(userID int) ([]models.HydrationData,
 	var data []models.HydrationData
 	for rows.Next() {
 		var item models.HydrationData
+		var creationDatetimeStr string
 		err := rows.Scan(&item.ID, &item.UserID, &item.Weight, &item.Height, &item.SweatPosition,
 			&item.TimeTaken, &item.BMI, &item.TBSA, &item.ImagePath, &item.SweatRate,
-			&item.SweatLoss, &item.DeviceType, &item.ImageID, &item.CreationDatetime)
+			&item.SweatLoss, &item.DeviceType, &item.ImageID, &creationDatetimeStr)
 		if err != nil {
 			return nil, err
 		}
+
+		// Parse creation_datetime from string to time.Time
+		if creationDatetimeStr != "" {
+			// Try multiple time formats
+			formats := []string{
+				"2006-01-02 15:04:05",
+				"2006-01-02T15:04:05Z",
+				"2006-01-02T15:04:05.000Z",
+				"2006-01-02 15:04:05.000",
+			}
+
+			for _, format := range formats {
+				if parsedTime, err := time.Parse(format, creationDatetimeStr); err == nil {
+					item.CreationDatetime = parsedTime
+					break
+				}
+			}
+		}
+
 		data = append(data, item)
 	}
 
