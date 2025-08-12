@@ -431,6 +431,100 @@ func (s *HydrationService) GetUserDetailedSummary(id int) (*models.DetailedSumma
 	}, nil
 }
 
+// GetHydrationSummaryScreen retrieves formatted data for the summary screen
+func (s *HydrationService) GetHydrationSummaryScreen(id int) (*models.HydrationSummaryData, error) {
+	// Get the main hydration data
+	hydrationData, err := s.GetHydrationDataByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get summary based on sweat position (not used in current implementation)
+	_, _ = s.GetSummary(hydrationData.SweatPosition)
+
+	// Get sweat summary if image_id is provided
+	var sweatSummary []models.SweatSummaryItem
+	if hydrationData.ImageID != nil {
+		sweatImages, _ := s.GetSweatSummaryByImageID(*hydrationData.ImageID)
+		// Convert SweatImage to SweatSummaryItem
+		for _, img := range sweatImages {
+			sweatSummary = append(sweatSummary, models.SweatSummaryItem{
+				ID:           img.ID,
+				ImagePath:    img.ImagePath,
+				SweatRange:   img.SweatRange,
+				Implications: img.Implications,
+				Recommend:    img.Recomm,
+				Strategy:     img.Strategy,
+				Result:       img.Result,
+				ColorCode:    img.ColorCode,
+			})
+		}
+	}
+
+	// Get sweat rate summary
+	sweatRateSummary, _ := s.GetSweatRateSummary(hydrationData.SweatRate)
+	var sweatRateSummaryItems []models.SweatRateSummaryItem
+	for _, rate := range sweatRateSummary {
+		sweatRateSummaryItems = append(sweatRateSummaryItems, models.SweatRateSummaryItem{
+			ID:        rate.ID,
+			LowLimit:  rate.LowLimit,
+			HighLimit: rate.HighLimit,
+			HydStatus: rate.HydStatus,
+			Comments:  rate.Comments,
+			Recommend: rate.Recomm,
+			Color:     rate.Color,
+		})
+	}
+
+	// Create the summary data
+	summaryData := &models.HydrationSummaryData{
+		ID:               hydrationData.ID,
+		UserID:           hydrationData.UserID,
+		Weight:           hydrationData.Weight,
+		Height:           hydrationData.Height,
+		SweatPosition:    hydrationData.SweatPosition,
+		TimeTaken:        hydrationData.TimeTaken,
+		BMI:              hydrationData.BMI,
+		TBSA:             hydrationData.TBSA,
+		ImagePath:        *hydrationData.ImagePath,
+		SweatRate:        hydrationData.SweatRate,
+		SweatLoss:        hydrationData.SweatLoss,
+		DeviceType:       hydrationData.DeviceType,
+		ImageID:          *hydrationData.ImageID,
+		CreationDatetime: hydrationData.CreationDatetime,
+		SweatSummary:     sweatSummary,
+		SweatRateSummary: sweatRateSummaryItems,
+	}
+
+	// Calculate additional display fields
+	if len(sweatRateSummaryItems) > 0 {
+		summaryData.HydrationStatus = sweatRateSummaryItems[0].HydStatus
+		summaryData.RiskLevel = s.calculateRiskLevel(hydrationData.SweatRate)
+		summaryData.Recommendations = sweatRateSummaryItems[0].Recommend
+		summaryData.NextTestDate = s.calculateNextTestDate(hydrationData.CreationDatetime)
+	}
+
+	return summaryData, nil
+}
+
+// calculateRiskLevel determines the risk level based on sweat rate
+func (s *HydrationService) calculateRiskLevel(sweatRate float64) string {
+	if sweatRate < 200 {
+		return "Low"
+	} else if sweatRate < 500 {
+		return "Moderate"
+	} else {
+		return "High"
+	}
+}
+
+// calculateNextTestDate suggests when the next test should be done
+func (s *HydrationService) calculateNextTestDate(lastTestDate time.Time) string {
+	// Suggest next test in 7 days for high risk, 14 days for moderate, 30 days for low
+	nextDate := lastTestDate.AddDate(0, 0, 7) // Default to 7 days
+	return nextDate.Format("2006-01-02")
+}
+
 // GetClientHistory retrieves client history (matches PHP logic)
 func (s *HydrationService) GetClientHistory(userID int) ([]models.HydrationData, error) {
 	query := `

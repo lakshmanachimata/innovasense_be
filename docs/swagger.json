@@ -365,6 +365,53 @@
                 }
             }
         },
+        "/Services/protected/getHydrationSummaryScreen": {
+            "post": {
+                "description": "Get formatted hydration data specifically for the summary screen display",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hydration"
+                ],
+                "summary": "Get hydration summary screen data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Summary screen request data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.HydrationSummaryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.HydrationSummaryResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/Services/protected/getSummary": {
             "post": {
                 "description": "Get summary data based on sweat position",
@@ -938,6 +985,112 @@
                 }
             }
         },
+        "models.HydrationSummaryData": {
+            "type": "object",
+            "properties": {
+                "bmi": {
+                    "type": "number"
+                },
+                "creation_datetime": {
+                    "type": "string"
+                },
+                "device_type": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "hydration_status": {
+                    "description": "Additional calculated fields for display",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_id": {
+                    "type": "integer"
+                },
+                "image_path": {
+                    "type": "string"
+                },
+                "next_test_date": {
+                    "type": "string"
+                },
+                "recommendations": {
+                    "type": "string"
+                },
+                "risk_level": {
+                    "type": "string"
+                },
+                "sweat_loss": {
+                    "type": "number"
+                },
+                "sweat_position": {
+                    "type": "number"
+                },
+                "sweat_rate": {
+                    "type": "number"
+                },
+                "sweat_rate_summary": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SweatRateSummaryItem"
+                    }
+                },
+                "sweat_summary": {
+                    "description": "Summary sections",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SweatSummaryItem"
+                    }
+                },
+                "tbsa": {
+                    "type": "number"
+                },
+                "time_taken": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.HydrationSummaryRequest": {
+            "type": "object",
+            "required": [
+                "cnumber",
+                "id",
+                "username"
+            ],
+            "properties": {
+                "cnumber": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.HydrationSummaryResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "response": {
+                    "$ref": "#/definitions/models.HydrationSummaryData"
+                }
+            }
+        },
         "models.LoginRequest": {
             "description": "Login request data structure",
             "type": "object",
@@ -1019,6 +1172,61 @@
                     "type": "number"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SweatRateSummaryItem": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "comments": {
+                    "type": "string"
+                },
+                "high_limit": {
+                    "type": "number"
+                },
+                "hyd_status": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "low_limit": {
+                    "type": "number"
+                },
+                "recomm": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SweatSummaryItem": {
+            "type": "object",
+            "properties": {
+                "colorcode": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_path": {
+                    "type": "string"
+                },
+                "implications": {
+                    "type": "string"
+                },
+                "recomm": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string"
+                },
+                "strategy": {
+                    "type": "string"
+                },
+                "sweat_range": {
                     "type": "string"
                 }
             }

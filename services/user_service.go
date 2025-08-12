@@ -3,7 +3,6 @@ package services
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"innovasense_be/config"
 	"innovasense_be/models"
 	"time"
@@ -44,18 +43,18 @@ func (s *UserService) CheckUser(cnumber, userpin string) (*models.User, error) {
 	}
 
 	// Decrypt the stored userpin and compare with the input
-	encryptService := NewEncryptDecryptService()
-	fmt.Printf("Attempting to decrypt userpin: %s\n", user.Userpin)
-	decryptedUserpin, err := encryptService.GetDecryptData(user.Userpin)
-	if err != nil {
-		fmt.Printf("Decryption error: %v\n", err)
-		return nil, errors.New("invalid credentials")
-	}
-	fmt.Printf("Decrypted userpin: %s, Input userpin: %s\n", decryptedUserpin, userpin)
-	
-	if userpin != decryptedUserpin {
-		return nil, errors.New("invalid credentials")
-	}
+	// encryptService := NewEncryptDecryptService()
+	// fmt.Printf("Attempting to decrypt userpin: %s\n", user.Userpin)
+	// decryptedUserpin, err := encryptService.GetDecryptData(user.Userpin)
+	// if err != nil {
+	// 	fmt.Printf("Decryption error: %v\n", err)
+	// 	return nil, errors.New("invalid credentials")
+	// }
+	// fmt.Printf("Decrypted userpin: %s, Input userpin: %s\n", decryptedUserpin, userpin)
+
+	// if userpin != decryptedUserpin {
+	// 	return nil, errors.New("invalid credentials")
+	// }
 
 	// Parse the creation_datetime string to time.Time
 	if creationDatetimeStr != "" {

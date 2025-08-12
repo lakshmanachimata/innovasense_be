@@ -494,6 +494,72 @@ func (c *HydrationController) GetUserDetailedSummary(ctx *gin.Context) {
 	})
 }
 
+// GetHydrationSummaryScreen retrieves formatted data for the summary screen
+// @Summary Get hydration summary screen data
+// @Description Get formatted hydration data specifically for the summary screen display
+// @Tags Hydration
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer JWT Token"
+// @Param request body models.HydrationSummaryRequest true "Summary screen request data"
+// @Success 200 {object} models.HydrationSummaryResponse
+// @Failure 400 {object} models.APIResponse
+// @Router /Services/protected/getHydrationSummaryScreen [post]
+func (c *HydrationController) GetHydrationSummaryScreen(ctx *gin.Context) {
+	// Get user information from JWT claims
+	claims, exists := middleware.GetJWTClaimsFromContext(ctx)
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, models.APIResponse{
+			Code:    1,
+			Message: "User not authenticated",
+		})
+		return
+	}
+
+	var req models.HydrationSummaryRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Invalid request data",
+		})
+		return
+	}
+
+	// Validate cnumber and username from request body against JWT claims
+	if req.CNumber != claims.CNumber {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "cnumber in request body does not match authenticated user",
+		})
+		return
+	}
+
+	if req.Username != claims.UserName {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "username in request body does not match authenticated user",
+		})
+		return
+	}
+
+	// Get the summary screen data
+	summaryData, err := c.hydrationService.GetHydrationSummaryScreen(req.ID)
+	if err != nil {
+		ctx.JSON(http.StatusOK, models.APIResponse{
+			Code:     1,
+			Message:  "Failed to get summary screen data",
+			Response: 0,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, models.HydrationSummaryResponse{
+		Code:     0,
+		Message:  "Success",
+		Response: summaryData,
+	})
+}
+
 // GetClientHistory handles client history retrieval
 // @Summary Get client history
 // @Description Get recent history for a client

@@ -55,6 +55,7 @@ func SetupRoutes(r *gin.Engine) {
 		protectedGroup.POST("/updateSweatData", hydrationController.UpdateSweatData)
 		protectedGroup.POST("/getSummary", hydrationController.GetSummary)
 		protectedGroup.POST("/getUserDetailedSummary", hydrationController.GetUserDetailedSummary)
+		protectedGroup.POST("/getHydrationSummaryScreen", hydrationController.GetHydrationSummaryScreen)
 		protectedGroup.POST("/getClientHistory", hydrationController.GetClientHistory)
 		protectedGroup.POST("/getHyderartionHistory", hydrationController.GetHydrationHistory)
 		protectedGroup.POST("/getElectrolyteHistory", hydrationController.GetElectrolyteHistory)

@@ -106,6 +106,77 @@ definitions:
     - username
     - weight
     type: object
+  models.HydrationSummaryData:
+    properties:
+      bmi:
+        type: number
+      creation_datetime:
+        type: string
+      device_type:
+        type: integer
+      height:
+        type: number
+      hydration_status:
+        description: Additional calculated fields for display
+        type: string
+      id:
+        type: integer
+      image_id:
+        type: integer
+      image_path:
+        type: string
+      next_test_date:
+        type: string
+      recommendations:
+        type: string
+      risk_level:
+        type: string
+      sweat_loss:
+        type: number
+      sweat_position:
+        type: number
+      sweat_rate:
+        type: number
+      sweat_rate_summary:
+        items:
+          $ref: '#/definitions/models.SweatRateSummaryItem'
+        type: array
+      sweat_summary:
+        description: Summary sections
+        items:
+          $ref: '#/definitions/models.SweatSummaryItem'
+        type: array
+      tbsa:
+        type: number
+      time_taken:
+        type: number
+      user_id:
+        type: integer
+      weight:
+        type: number
+    type: object
+  models.HydrationSummaryRequest:
+    properties:
+      cnumber:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    required:
+    - cnumber
+    - id
+    - username
+    type: object
+  models.HydrationSummaryResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+      response:
+        $ref: '#/definitions/models.HydrationSummaryData'
+    type: object
   models.LoginRequest:
     description: Login request data structure
     properties:
@@ -169,6 +240,42 @@ definitions:
     - cnumber
     - sweat_position
     - username
+    type: object
+  models.SweatRateSummaryItem:
+    properties:
+      color:
+        type: string
+      comments:
+        type: string
+      high_limit:
+        type: number
+      hyd_status:
+        type: string
+      id:
+        type: integer
+      low_limit:
+        type: number
+      recomm:
+        type: string
+    type: object
+  models.SweatSummaryItem:
+    properties:
+      colorcode:
+        type: string
+      id:
+        type: integer
+      image_path:
+        type: string
+      implications:
+        type: string
+      recomm:
+        type: string
+      result:
+        type: string
+      strategy:
+        type: string
+      sweat_range:
+        type: string
     type: object
   models.UpdateHydrationRequest:
     properties:
@@ -483,6 +590,38 @@ paths:
       summary: Get hydration history
       tags:
       - Reports
+  /Services/protected/getHydrationSummaryScreen:
+    post:
+      consumes:
+      - application/json
+      description: Get formatted hydration data specifically for the summary screen
+        display
+      parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Summary screen request data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.HydrationSummaryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.HydrationSummaryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get hydration summary screen data
+      tags:
+      - Hydration
   /Services/protected/getSummary:
     post:
       consumes:
