@@ -373,7 +373,7 @@ const docTemplate = `{
         },
         "/Services/protected/getSummary": {
             "post": {
-                "description": "Get summary based on sweat position using sweat_summary table",
+                "description": "Get summary data based on sweat position",
                 "consumes": [
                     "application/json"
                 ],
@@ -428,17 +428,24 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Data Retrieval"
+                    "File Management"
                 ],
                 "summary": "Get sweat images",
                 "parameters": [
                     {
-                        "description": "Empty request",
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Sweat images request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object"
+                            "$ref": "#/definitions/models.GetSweatImagesRequest"
                         }
                     }
                 ],
@@ -661,6 +668,13 @@ const docTemplate = `{
                 "summary": "Update image path",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Image path update request",
                         "name": "request",
                         "in": "body",
@@ -735,9 +749,9 @@ const docTemplate = `{
         },
         "/Services/protected/uploadInnovoImage": {
             "post": {
-                "description": "Upload an image and save the path",
+                "description": "Upload an image and save it to server with username_timestamp.jpg format",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -748,13 +762,27 @@ const docTemplate = `{
                 "summary": "Upload image",
                 "parameters": [
                     {
-                        "description": "Image upload request",
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "User identity information",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/models.ImageUploadRequest"
                         }
+                    },
+                    {
+                        "type": "file",
+                        "description": "Image file to upload",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -822,22 +850,50 @@ const docTemplate = `{
         "models.DetailedSummaryRequest": {
             "type": "object",
             "required": [
-                "id"
+                "cnumber",
+                "id",
+                "username"
             ],
             "properties": {
+                "cnumber": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.GetSweatImagesRequest": {
+            "type": "object",
+            "required": [
+                "cnumber",
+                "username"
+            ],
+            "properties": {
+                "cnumber": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
         "models.HistoryRequest": {
             "type": "object",
             "required": [
+                "cnumber",
                 "from_date",
                 "to_date",
-                "userid"
+                "userid",
+                "username"
             ],
             "properties": {
+                "cnumber": {
+                    "type": "string"
+                },
                 "from_date": {
                     "type": "string"
                 },
@@ -846,20 +902,28 @@ const docTemplate = `{
                 },
                 "userid": {
                     "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
         "models.HydrationRequest": {
             "type": "object",
             "required": [
+                "cnumber",
                 "device_type",
                 "height",
                 "sweat_position",
                 "time_taken",
                 "userid",
+                "username",
                 "weight"
             ],
             "properties": {
+                "cnumber": {
+                    "type": "string"
+                },
                 "device_type": {
                     "type": "integer"
                 },
@@ -881,6 +945,9 @@ const docTemplate = `{
                 "userid": {
                     "type": "integer"
                 },
+                "username": {
+                    "type": "string"
+                },
                 "weight": {
                     "type": "number"
                 }
@@ -889,15 +956,15 @@ const docTemplate = `{
         "models.ImageUploadRequest": {
             "type": "object",
             "required": [
-                "image_path",
-                "userid"
+                "cnumber",
+                "username"
             ],
             "properties": {
-                "image_path": {
+                "cnumber": {
                     "type": "string"
                 },
-                "userid": {
-                    "type": "integer"
+                "username": {
+                    "type": "string"
                 }
             }
         },
@@ -970,22 +1037,35 @@ const docTemplate = `{
         "models.SummaryRequest": {
             "type": "object",
             "required": [
-                "sweat_position"
+                "cnumber",
+                "sweat_position",
+                "username"
             ],
             "properties": {
+                "cnumber": {
+                    "type": "string"
+                },
                 "sweat_position": {
                     "type": "number"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
         "models.UpdateHydrationRequest": {
             "type": "object",
             "required": [
-                "id"
+                "cnumber",
+                "id",
+                "username"
             ],
             "properties": {
                 "bmi": {
                     "type": "number"
+                },
+                "cnumber": {
+                    "type": "string"
                 },
                 "device_type": {
                     "type": "integer"
@@ -1011,6 +1091,9 @@ const docTemplate = `{
                 "time_taken": {
                     "type": "number"
                 },
+                "username": {
+                    "type": "string"
+                },
                 "weight": {
                     "type": "number"
                 }
@@ -1019,11 +1102,16 @@ const docTemplate = `{
         "models.UpdateImagePathRequest": {
             "type": "object",
             "required": [
+                "cnumber",
                 "image_id",
                 "image_path",
-                "userid"
+                "userid",
+                "username"
             ],
             "properties": {
+                "cnumber": {
+                    "type": "string"
+                },
                 "image_id": {
                     "type": "integer"
                 },
@@ -1032,18 +1120,26 @@ const docTemplate = `{
                 },
                 "userid": {
                     "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
         "models.UpdateSweatDataRequest": {
             "type": "object",
             "required": [
+                "cnumber",
                 "image_id",
                 "sweat_loss",
                 "sweat_rate",
-                "userid"
+                "userid",
+                "username"
             ],
             "properties": {
+                "cnumber": {
+                    "type": "string"
+                },
                 "image_id": {
                     "type": "integer"
                 },
@@ -1055,6 +1151,9 @@ const docTemplate = `{
                 },
                 "userid": {
                     "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }

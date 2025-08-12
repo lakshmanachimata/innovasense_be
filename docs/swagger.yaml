@@ -34,26 +34,50 @@ definitions:
     type: object
   models.DetailedSummaryRequest:
     properties:
+      cnumber:
+        type: string
       id:
         type: integer
+      username:
+        type: string
     required:
+    - cnumber
     - id
+    - username
+    type: object
+  models.GetSweatImagesRequest:
+    properties:
+      cnumber:
+        type: string
+      username:
+        type: string
+    required:
+    - cnumber
+    - username
     type: object
   models.HistoryRequest:
     properties:
+      cnumber:
+        type: string
       from_date:
         type: string
       to_date:
         type: string
       userid:
         type: integer
+      username:
+        type: string
     required:
+    - cnumber
     - from_date
     - to_date
     - userid
+    - username
     type: object
   models.HydrationRequest:
     properties:
+      cnumber:
+        type: string
       device_type:
         type: integer
       height:
@@ -68,25 +92,29 @@ definitions:
         type: number
       userid:
         type: integer
+      username:
+        type: string
       weight:
         type: number
     required:
+    - cnumber
     - device_type
     - height
     - sweat_position
     - time_taken
     - userid
+    - username
     - weight
     type: object
   models.ImageUploadRequest:
     properties:
-      image_path:
+      cnumber:
         type: string
-      userid:
-        type: integer
+      username:
+        type: string
     required:
-    - image_path
-    - userid
+    - cnumber
+    - username
     type: object
   models.LoginRequest:
     description: Login request data structure
@@ -141,15 +169,23 @@ definitions:
     type: object
   models.SummaryRequest:
     properties:
+      cnumber:
+        type: string
       sweat_position:
         type: number
+      username:
+        type: string
     required:
+    - cnumber
     - sweat_position
+    - username
     type: object
   models.UpdateHydrationRequest:
     properties:
       bmi:
         type: number
+      cnumber:
+        type: string
       device_type:
         type: integer
       height:
@@ -166,26 +202,38 @@ definitions:
         type: number
       time_taken:
         type: number
+      username:
+        type: string
       weight:
         type: number
     required:
+    - cnumber
     - id
+    - username
     type: object
   models.UpdateImagePathRequest:
     properties:
+      cnumber:
+        type: string
       image_id:
         type: integer
       image_path:
         type: string
       userid:
         type: integer
+      username:
+        type: string
     required:
+    - cnumber
     - image_id
     - image_path
     - userid
+    - username
     type: object
   models.UpdateSweatDataRequest:
     properties:
+      cnumber:
+        type: string
       image_id:
         type: integer
       sweat_loss:
@@ -194,11 +242,15 @@ definitions:
         type: number
       userid:
         type: integer
+      username:
+        type: string
     required:
+    - cnumber
     - image_id
     - sweat_loss
     - sweat_rate
     - userid
+    - username
     type: object
 host: localhost:8500
 info:
@@ -445,7 +497,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Get summary based on sweat position using sweat_summary table
+      description: Get summary data based on sweat position
       parameters:
       - description: Bearer JWT Token
         in: header
@@ -478,12 +530,17 @@ paths:
       - application/json
       description: Retrieve sweat analysis images with metadata
       parameters:
-      - description: Empty request
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Sweat images request
         in: body
         name: request
         required: true
         schema:
-          type: object
+          $ref: '#/definitions/models.GetSweatImagesRequest'
       produces:
       - application/json
       responses:
@@ -497,7 +554,7 @@ paths:
             $ref: '#/definitions/models.APIResponse'
       summary: Get sweat images
       tags:
-      - Data Retrieval
+      - File Management
   /Services/protected/getUserDetailedSummary:
     post:
       consumes:
@@ -631,6 +688,11 @@ paths:
       - application/json
       description: Update the path of an existing image
       parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Image path update request
         in: body
         name: request
@@ -685,15 +747,26 @@ paths:
   /Services/protected/uploadInnovoImage:
     post:
       consumes:
-      - application/json
-      description: Upload an image and save the path
+      - multipart/form-data
+      description: Upload an image and save it to server with username_timestamp.jpg
+        format
       parameters:
-      - description: Image upload request
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User identity information
         in: body
         name: request
         required: true
         schema:
           $ref: '#/definitions/models.ImageUploadRequest'
+      - description: Image file to upload
+        in: formData
+        name: image
+        required: true
+        type: file
       produces:
       - application/json
       responses:

@@ -24,12 +24,12 @@ func (s *UserService) CheckUser(cnumber, userpin string) (*models.User, error) {
 		SELECT id, cnumber, userpin, username, gender, age, height, weight, 
 		       role_id, ustatus, creation_datetime
 		FROM users_master 
-		WHERE cnumber = ? AND userpin = ? AND ustatus = 0
+		WHERE cnumber = ? AND ustatus = 0
 	`
 
 	var user models.User
 	var creationDatetimeStr string
-	err := s.db.QueryRow(query, cnumber, userpin).Scan(
+	err := s.db.QueryRow(query, cnumber).Scan(
 		&user.ID, &user.CNumber, &user.Userpin, &user.Username, &user.Gender,
 		&user.Age, &user.Height, &user.Weight, &user.RoleID, &user.UStatus,
 		&creationDatetimeStr,
@@ -42,12 +42,17 @@ func (s *UserService) CheckUser(cnumber, userpin string) (*models.User, error) {
 		return nil, err
 	}
 
+	// Simple password comparison for now
+	if userpin != user.Userpin {
+		return nil, errors.New("invalid credentials")
+	}
+
 	// Parse the creation_datetime string to time.Time
 	if creationDatetimeStr != "" {
 		parsedTime, err := time.Parse("2006-01-02 15:04:05.999999", creationDatetimeStr)
 		if err != nil {
 			// Try alternative format without microseconds
-			parsedTime, err = time.Parse("2006-01-02 15:04:05", creationDatetimeStr)
+			parsedTime, err := time.Parse("2006-01-02 15:04:05", creationDatetimeStr)
 			if err != nil {
 				// If parsing fails, set to zero time
 				user.CreationDatetime = time.Time{}

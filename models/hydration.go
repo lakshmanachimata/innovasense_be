@@ -57,6 +57,8 @@ type SweatSummary struct {
 
 // HydrationRequest represents hydration data submission request
 type HydrationRequest struct {
+	CNumber        string  `json:"cnumber" binding:"required"`
+	Username       string  `json:"username" binding:"required"`
 	UserID        int     `json:"userid" binding:"required"`
 	Weight        float64 `json:"weight" binding:"required"`
 	Height        float64 `json:"height" binding:"required"`
@@ -69,6 +71,8 @@ type HydrationRequest struct {
 
 // UpdateHydrationRequest represents hydration data update request
 type UpdateHydrationRequest struct {
+	CNumber        string  `json:"cnumber" binding:"required"`
+	Username       string  `json:"username" binding:"required"`
 	ID            int     `json:"id" binding:"required"`
 	Weight        float64 `json:"weight"`
 	Height        float64 `json:"height"`
@@ -93,6 +97,8 @@ type SweatData struct {
 
 // UpdateSweatDataRequest represents sweat data update request
 type UpdateSweatDataRequest struct {
+	CNumber    string  `json:"cnumber" binding:"required"`
+	Username   string  `json:"username" binding:"required"`
 	UserID    int     `json:"userid" binding:"required"`
 	ImageID   int     `json:"image_id" binding:"required"`
 	SweatRate float64 `json:"sweat_rate" binding:"required"`
@@ -101,6 +107,8 @@ type UpdateSweatDataRequest struct {
 
 // HistoryRequest represents history data request
 type HistoryRequest struct {
+	CNumber   string `json:"cnumber" binding:"required"`
+	Username  string `json:"username" binding:"required"`
 	UserID   int    `json:"userid" binding:"required"`
 	FromDate string `json:"from_date" binding:"required"`
 	ToDate   string `json:"to_date" binding:"required"`
@@ -108,10 +116,14 @@ type HistoryRequest struct {
 
 // SummaryRequest represents summary data request
 type SummaryRequest struct {
+	CNumber       string  `json:"cnumber" binding:"required"`
+	Username      string  `json:"username" binding:"required"`
 	SweatPosition float64 `json:"sweat_position" binding:"required"`
 }
 
 // DetailedSummaryRequest represents detailed summary request
 type DetailedSummaryRequest struct {
+	CNumber string `json:"cnumber" binding:"required"`
+	Username string `json:"username" binding:"required"`
 	ID int `json:"id" binding:"required"`
 }

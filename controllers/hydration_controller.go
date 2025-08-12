@@ -45,6 +45,32 @@ func (c *HydrationController) InnovoHydration(ctx *gin.Context) {
 		return
 	}
 
+	var req models.HydrationRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Invalid request data",
+		})
+		return
+	}
+
+	// Validate cnumber and username from request body against JWT claims
+	if req.CNumber != claims.CNumber {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "cnumber in request body does not match authenticated user",
+		})
+		return
+	}
+
+	if req.Username != claims.UserName {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "username in request body does not match authenticated user",
+		})
+		return
+	}
+
 	// Get user ID from CNumber
 	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
 	if err != nil {
@@ -52,15 +78,6 @@ func (c *HydrationController) InnovoHydration(ctx *gin.Context) {
 			Code:     1,
 			Message:  "User not found",
 			Response: 0,
-		})
-		return
-	}
-
-	var req models.HydrationRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, models.APIResponse{
-			Code:    1,
-			Message: "Invalid request data",
 		})
 		return
 	}
@@ -118,6 +135,32 @@ func (c *HydrationController) NewInnovoHydration(ctx *gin.Context) {
 		return
 	}
 
+	var req models.HydrationRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Invalid request data",
+		})
+		return
+	}
+
+	// Validate cnumber and username from request body against JWT claims
+	if req.CNumber != claims.CNumber {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "cnumber in request body does not match authenticated user",
+		})
+		return
+	}
+
+	if req.Username != claims.UserName {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "username in request body does not match authenticated user",
+		})
+		return
+	}
+
 	// Get user ID from CNumber
 	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
 	if err != nil {
@@ -125,15 +168,6 @@ func (c *HydrationController) NewInnovoHydration(ctx *gin.Context) {
 			Code:     1,
 			Message:  "User not found",
 			Response: 0,
-		})
-		return
-	}
-
-	var req models.HydrationRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, models.APIResponse{
-			Code:    1,
-			Message: "Invalid request data",
 		})
 		return
 	}
@@ -182,6 +216,32 @@ func (c *HydrationController) UpdateHydrationValue(ctx *gin.Context) {
 		return
 	}
 
+	var req models.UpdateHydrationRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Invalid request data",
+		})
+		return
+	}
+
+	// Validate cnumber and username from request body against JWT claims
+	if req.CNumber != claims.CNumber {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "cnumber in request body does not match authenticated user",
+		})
+		return
+	}
+
+	if req.Username != claims.UserName {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "username in request body does not match authenticated user",
+		})
+		return
+	}
+
 	// Get user ID from CNumber
 	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
 	if err != nil {
@@ -189,15 +249,6 @@ func (c *HydrationController) UpdateHydrationValue(ctx *gin.Context) {
 			Code:     1,
 			Message:  "User not found",
 			Response: 0,
-		})
-		return
-	}
-
-	var req models.UpdateHydrationRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, models.APIResponse{
-			Code:    1,
-			Message: "Invalid request data",
 		})
 		return
 	}
@@ -245,6 +296,32 @@ func (c *HydrationController) UpdateSweatData(ctx *gin.Context) {
 		return
 	}
 
+	var req models.UpdateSweatDataRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Invalid request data",
+		})
+		return
+	}
+
+	// Validate cnumber and username from request body against JWT claims
+	if req.CNumber != claims.CNumber {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "cnumber in request body does not match authenticated user",
+		})
+		return
+	}
+
+	if req.Username != claims.UserName {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "username in request body does not match authenticated user",
+		})
+		return
+	}
+
 	// Get user ID from CNumber
 	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
 	if err != nil {
@@ -252,15 +329,6 @@ func (c *HydrationController) UpdateSweatData(ctx *gin.Context) {
 			Code:     1,
 			Message:  "User not found",
 			Response: 0,
-		})
-		return
-	}
-
-	var req models.UpdateSweatDataRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, models.APIResponse{
-			Code:    1,
-			Message: "Invalid request data",
 		})
 		return
 	}
@@ -284,9 +352,9 @@ func (c *HydrationController) UpdateSweatData(ctx *gin.Context) {
 	})
 }
 
-// GetSummary handles summary data retrieval (matches PHP logic)
+// GetSummary handles summary retrieval
 // @Summary Get summary
-// @Description Get summary based on sweat position using sweat_summary table
+// @Description Get summary data based on sweat position
 // @Tags Reports
 // @Accept json
 // @Produce json
@@ -296,11 +364,38 @@ func (c *HydrationController) UpdateSweatData(ctx *gin.Context) {
 // @Failure 400 {object} models.APIResponse
 // @Router /Services/protected/getSummary [post]
 func (c *HydrationController) GetSummary(ctx *gin.Context) {
+	// Get user information from JWT claims
+	claims, exists := middleware.GetJWTClaimsFromContext(ctx)
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, models.APIResponse{
+			Code:    1,
+			Message: "User not authenticated",
+		})
+		return
+	}
+
 	var req models.SummaryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
 			Message: "Invalid request data",
+		})
+		return
+	}
+
+	// Validate cnumber and username from request body against JWT claims
+	if req.CNumber != claims.CNumber {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "cnumber in request body does not match authenticated user",
+		})
+		return
+	}
+
+	if req.Username != claims.UserName {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "username in request body does not match authenticated user",
 		})
 		return
 	}
@@ -334,11 +429,38 @@ func (c *HydrationController) GetSummary(ctx *gin.Context) {
 // @Failure 400 {object} models.APIResponse
 // @Router /Services/protected/getUserDetailedSummary [post]
 func (c *HydrationController) GetUserDetailedSummary(ctx *gin.Context) {
+	// Get user information from JWT claims
+	claims, exists := middleware.GetJWTClaimsFromContext(ctx)
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, models.APIResponse{
+			Code:    1,
+			Message: "User not authenticated",
+		})
+		return
+	}
+
 	var req models.DetailedSummaryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
 			Message: "Invalid request data",
+		})
+		return
+	}
+
+	// Validate cnumber and username from request body against JWT claims
+	if req.CNumber != claims.CNumber {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "cnumber in request body does not match authenticated user",
+		})
+		return
+	}
+
+	if req.Username != claims.UserName {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "username in request body does not match authenticated user",
 		})
 		return
 	}
@@ -434,6 +556,32 @@ func (c *HydrationController) GetHydrationHistory(ctx *gin.Context) {
 		return
 	}
 
+	var req models.HistoryRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Invalid request data",
+		})
+		return
+	}
+
+	// Validate cnumber and username from request body against JWT claims
+	if req.CNumber != claims.CNumber {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "cnumber in request body does not match authenticated user",
+		})
+		return
+	}
+
+	if req.Username != claims.UserName {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "username in request body does not match authenticated user",
+		})
+		return
+	}
+
 	// Get user ID from CNumber
 	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
 	if err != nil {
@@ -441,15 +589,6 @@ func (c *HydrationController) GetHydrationHistory(ctx *gin.Context) {
 			Code:     1,
 			Message:  "User not found",
 			Response: 0,
-		})
-		return
-	}
-
-	var req models.HistoryRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, models.APIResponse{
-			Code:    1,
-			Message: "Invalid request data",
 		})
 		return
 	}
@@ -496,6 +635,32 @@ func (c *HydrationController) GetElectrolyteHistory(ctx *gin.Context) {
 		return
 	}
 
+	var req models.HistoryRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Invalid request data",
+		})
+		return
+	}
+
+	// Validate cnumber and username from request body against JWT claims
+	if req.CNumber != claims.CNumber {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "cnumber in request body does not match authenticated user",
+		})
+		return
+	}
+
+	if req.Username != claims.UserName {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "username in request body does not match authenticated user",
+		})
+		return
+	}
+
 	// Get user ID from CNumber
 	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
 	if err != nil {
@@ -503,15 +668,6 @@ func (c *HydrationController) GetElectrolyteHistory(ctx *gin.Context) {
 			Code:     1,
 			Message:  "User not found",
 			Response: 0,
-		})
-		return
-	}
-
-	var req models.HistoryRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, models.APIResponse{
-			Code:    1,
-			Message: "Invalid request data",
 		})
 		return
 	}
