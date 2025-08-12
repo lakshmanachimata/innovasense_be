@@ -1,0 +1,1064 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the InnovoSens REST API for hydration and sweat analysis data collection.",
+        "title": "InnovoSens API",
+        "termsOfService": "https://innovosens.com/terms",
+        "contact": {
+            "name": "InnovoSens Support",
+            "url": "https://innovosens.com",
+            "email": "support@innovosens.com"
+        },
+        "license": {
+            "name": "InnovoSens License",
+            "url": "https://innovosens.com/license"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8500",
+    "basePath": "/",
+    "paths": {
+        "/Services/getBannerImages": {
+            "post": {
+                "description": "Retrieve banner images",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data Retrieval"
+                ],
+                "summary": "Get banner images",
+                "parameters": [
+                    {
+                        "description": "Empty request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/getDevices": {
+            "post": {
+                "description": "Retrieve available device types",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data Retrieval"
+                ],
+                "summary": "Get devices",
+                "parameters": [
+                    {
+                        "description": "Empty request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/getHomeImages": {
+            "post": {
+                "description": "Retrieve home page images",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data Retrieval"
+                ],
+                "summary": "Get home images",
+                "parameters": [
+                    {
+                        "description": "Empty request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/innovologin": {
+            "post": {
+                "description": "Authenticate a user with contact number and password. Returns JWT token valid for 30 days.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login successful with JWT token",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.APIResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.APIResponse"
+                                        },
+                                        "jwt_token": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/innovoregister": {
+            "post": {
+                "description": "Register a new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User registration",
+                "parameters": [
+                    {
+                        "description": "Registration data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/getClientHistory": {
+            "post": {
+                "description": "Get recent history for a client",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Get client history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/getElectrolyteHistory": {
+            "post": {
+                "description": "Get electrolyte history for a date range (returns only creation_datetime and image_id)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Get electrolyte history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "History request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.HistoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/getHyderartionHistory": {
+            "post": {
+                "description": "Get hydration history for a date range with inclusive date handling",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Get hydration history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "History request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.HistoryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/getSummary": {
+            "post": {
+                "description": "Get summary based on sweat position using sweat_summary table",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Get summary",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Summary request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SummaryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/getSweatImages": {
+            "post": {
+                "description": "Retrieve sweat analysis images with metadata",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data Retrieval"
+                ],
+                "summary": "Get sweat images",
+                "parameters": [
+                    {
+                        "description": "Empty request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/getUserDetailedSummary": {
+            "post": {
+                "description": "Get detailed summary with multiple data sources (hydration data, summary, sweat summary, sweat rate summary)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Get detailed summary",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Detailed summary request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DetailedSummaryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/innovoHyderation": {
+            "post": {
+                "description": "Record basic hydration data with automatic BMI, TBSA, sweat loss, and sweat rate calculations",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hydration"
+                ],
+                "summary": "Record hydration data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Hydration data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.HydrationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/newinnovoHyderation": {
+            "post": {
+                "description": "Record enhanced hydration data with additional calculations and summaries",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hydration"
+                ],
+                "summary": "Record enhanced hydration data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Enhanced hydration data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.HydrationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/updateHyderationValue": {
+            "post": {
+                "description": "Update existing hydration data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hydration"
+                ],
+                "summary": "Update hydration data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated hydration data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateHydrationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/updateInnovoImagePath": {
+            "post": {
+                "description": "Update the path of an existing image",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "File Management"
+                ],
+                "summary": "Update image path",
+                "parameters": [
+                    {
+                        "description": "Image path update request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateImagePathRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/updateSweatData": {
+            "post": {
+                "description": "Update sweat analysis data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hydration"
+                ],
+                "summary": "Update sweat data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Sweat data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateSweatDataRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/Services/protected/uploadInnovoImage": {
+            "post": {
+                "description": "Upload an image and save the path",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "File Management"
+                ],
+                "summary": "Upload image",
+                "parameters": [
+                    {
+                        "description": "Image upload request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ImageUploadRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.APIResponse": {
+            "description": "Standard API response format used across all endpoints",
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "@Description Response code: 0 for success, 1 for error",
+                    "type": "integer",
+                    "example": 0
+                },
+                "jwt_token": {
+                    "description": "@Description JWT token when applicable",
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                },
+                "message": {
+                    "description": "@Description Response message",
+                    "type": "string",
+                    "example": "OK"
+                },
+                "response": {
+                    "description": "@Description Main response data (varies by endpoint)"
+                },
+                "summary": {
+                    "description": "@Description Summary data when applicable"
+                },
+                "sweatratesummary": {
+                    "description": "@Description Sweat rate summary when applicable"
+                },
+                "sweatsummary": {
+                    "description": "@Description Sweat summary when applicable"
+                },
+                "userdetails": {
+                    "description": "@Description User details when applicable"
+                },
+                "userid": {
+                    "description": "@Description User ID when applicable",
+                    "type": "integer",
+                    "example": 123
+                },
+                "users": {
+                    "description": "@Description Users list when applicable"
+                }
+            }
+        },
+        "models.DetailedSummaryRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.HistoryRequest": {
+            "type": "object",
+            "required": [
+                "from_date",
+                "to_date",
+                "userid"
+            ],
+            "properties": {
+                "from_date": {
+                    "type": "string"
+                },
+                "to_date": {
+                    "type": "string"
+                },
+                "userid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.HydrationRequest": {
+            "type": "object",
+            "required": [
+                "device_type",
+                "height",
+                "sweat_position",
+                "time_taken",
+                "userid",
+                "weight"
+            ],
+            "properties": {
+                "device_type": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "image_id": {
+                    "type": "integer"
+                },
+                "image_path": {
+                    "type": "string"
+                },
+                "sweat_position": {
+                    "type": "number"
+                },
+                "time_taken": {
+                    "type": "number"
+                },
+                "userid": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ImageUploadRequest": {
+            "type": "object",
+            "required": [
+                "image_path",
+                "userid"
+            ],
+            "properties": {
+                "image_path": {
+                    "type": "string"
+                },
+                "userid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.LoginRequest": {
+            "description": "Login request data structure",
+            "type": "object",
+            "required": [
+                "cnumber",
+                "userpin"
+            ],
+            "properties": {
+                "cnumber": {
+                    "description": "@Description User's contact number (required)",
+                    "type": "string",
+                    "example": "1234567890"
+                },
+                "userpin": {
+                    "description": "@Description User's PIN/password (required)",
+                    "type": "string",
+                    "example": "test@123"
+                }
+            }
+        },
+        "models.RegisterRequest": {
+            "description": "User registration request data structure",
+            "type": "object",
+            "required": [
+                "cnumber",
+                "username",
+                "userpin"
+            ],
+            "properties": {
+                "age": {
+                    "description": "@Description User's age in years",
+                    "type": "integer",
+                    "example": 25
+                },
+                "cnumber": {
+                    "description": "@Description User's contact number (required)",
+                    "type": "string",
+                    "example": "1234567890"
+                },
+                "gender": {
+                    "description": "@Description User's gender",
+                    "type": "string",
+                    "example": "Male"
+                },
+                "height": {
+                    "description": "@Description User's height in cm",
+                    "type": "number",
+                    "example": 170.5
+                },
+                "username": {
+                    "description": "@Description User's display name (required)",
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "userpin": {
+                    "description": "@Description User's PIN/password (required)",
+                    "type": "string",
+                    "example": "test@123"
+                },
+                "weight": {
+                    "description": "@Description User's weight in kg",
+                    "type": "number",
+                    "example": 70
+                }
+            }
+        },
+        "models.SummaryRequest": {
+            "type": "object",
+            "required": [
+                "sweat_position"
+            ],
+            "properties": {
+                "sweat_position": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.UpdateHydrationRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "bmi": {
+                    "type": "number"
+                },
+                "device_type": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "sweat_loss": {
+                    "type": "number"
+                },
+                "sweat_position": {
+                    "type": "number"
+                },
+                "sweat_rate": {
+                    "type": "number"
+                },
+                "tbsa": {
+                    "type": "number"
+                },
+                "time_taken": {
+                    "type": "number"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.UpdateImagePathRequest": {
+            "type": "object",
+            "required": [
+                "image_id",
+                "image_path",
+                "userid"
+            ],
+            "properties": {
+                "image_id": {
+                    "type": "integer"
+                },
+                "image_path": {
+                    "type": "string"
+                },
+                "userid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.UpdateSweatDataRequest": {
+            "type": "object",
+            "required": [
+                "image_id",
+                "sweat_loss",
+                "sweat_rate",
+                "userid"
+            ],
+            "properties": {
+                "image_id": {
+                    "type": "integer"
+                },
+                "sweat_loss": {
+                    "type": "number"
+                },
+                "sweat_rate": {
+                    "type": "number"
+                },
+                "userid": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

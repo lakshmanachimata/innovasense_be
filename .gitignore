@@ -8,6 +8,16 @@
 *.so
 *.dylib
 
+# Go binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.a
+*.o
+*.obj
+
 # Test binary, built with `go test -c`
 *.test
 
@@ -24,8 +34,54 @@ profile.cov
 go.work
 go.work.sum
 
-# env file
+# Environment and configuration files
 .env
+*.log
+*.DS_Store
+*.db
+*.out
+
+# Project-specific binaries
+innovasense_api
+innovasense_be
+
+# Additional binary and compiled files
+*.bin
+*.dat
+*.tmp
+*.temp
+*.cache
+*.lock
+*.pid
+*.swp
+*.swo
+*~
+
+# Archive files
+*.zip
+*.tar
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+*__debug_bin*
+# Image files (if you don't want to track them)
+# *.jpg
+# *.jpeg
+# *.png
+# *.gif
+# *.bmp
+# *.ico
+# *.svg
+
+# Document files (if you don't want to track them)
+# *.pdf
+# *.doc
+# *.docx
+# *.xls
+# *.xlsx
+# *.ppt
+# *.pptx
 
 # Editor/IDE
 # .idea/

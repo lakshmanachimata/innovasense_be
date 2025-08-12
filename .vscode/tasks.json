@@ -1,0 +1,255 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build-backend",
+            "type": "shell",
+            "command": "go",
+            "args": ["build", "-o", "innovasense_be", "."],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": ["$go"]
+        },
+        {
+            "label": "clean-build",
+            "type": "shell",
+            "command": "go",
+            "args": ["clean"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "run-tests",
+            "type": "shell",
+            "command": "go",
+            "args": ["test", "-v", "./tests/..."],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": ["$go"]
+        },
+        {
+            "label": "run-tests-coverage",
+            "type": "shell",
+            "command": "go",
+            "args": ["test", "-v", "-cover", "./tests/..."],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "generate-coverage-report",
+            "type": "shell",
+            "command": "go",
+            "args": ["test", "-coverprofile=coverage.out", "-coverpkg=./...", "./tests/..."],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "show-coverage-html",
+            "type": "shell",
+            "command": "go",
+            "args": ["tool", "cover", "-html=coverage.out"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "dependsOn": "generate-coverage-report"
+        },
+        {
+            "label": "run-benchmarks",
+            "type": "shell",
+            "command": "go",
+            "args": ["test", "-bench=.", "./tests/..."],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "start-server-debug",
+            "type": "shell",
+            "command": "go",
+            "args": ["run", "main.go"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "env": {
+                "PORT": "8500",
+                "GIN_MODE": "debug"
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "Server starting on port (\\d+)",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Server starting on port",
+                    "endsPattern": "Server starting on port \\d+"
+                }
+            }
+        },
+        {
+            "label": "start-server-test",
+            "type": "shell",
+            "command": "go",
+            "args": ["run", "main.go"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "env": {
+                "PORT": "8501",
+                "GIN_MODE": "debug"
+            },
+            "isBackground": true
+        },
+        {
+            "label": "generate-swagger",
+            "type": "shell",
+            "command": "swag",
+            "args": ["init"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "go-lint",
+            "type": "shell",
+            "command": "golangci-lint",
+            "args": ["run"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "go-mod-tidy",
+            "type": "shell",
+            "command": "go",
+            "args": ["mod", "tidy"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "go-mod-download",
+            "type": "shell",
+            "command": "go",
+            "args": ["mod", "download"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "clean-cache",
+            "type": "shell",
+            "command": "go",
+            "args": ["clean", "-cache", "-modcache", "-testcache"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "check-go-version",
+            "type": "shell",
+            "command": "go",
+            "args": ["version"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "install-air",
+            "type": "shell",
+            "command": "go",
+            "args": ["install", "github.com/cosmtrek/air@latest"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "run-air",
+            "type": "shell",
+            "command": "air",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "isBackground": true,
+            "dependsOn": "install-air"
+        }
+    ]
+}

@@ -1,0 +1,717 @@
+basePath: /
+definitions:
+  models.APIResponse:
+    description: Standard API response format used across all endpoints
+    properties:
+      code:
+        description: '@Description Response code: 0 for success, 1 for error'
+        example: 0
+        type: integer
+      jwt_token:
+        description: '@Description JWT token when applicable'
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      message:
+        description: '@Description Response message'
+        example: OK
+        type: string
+      response:
+        description: '@Description Main response data (varies by endpoint)'
+      summary:
+        description: '@Description Summary data when applicable'
+      sweatratesummary:
+        description: '@Description Sweat rate summary when applicable'
+      sweatsummary:
+        description: '@Description Sweat summary when applicable'
+      userdetails:
+        description: '@Description User details when applicable'
+      userid:
+        description: '@Description User ID when applicable'
+        example: 123
+        type: integer
+      users:
+        description: '@Description Users list when applicable'
+    type: object
+  models.DetailedSummaryRequest:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  models.HistoryRequest:
+    properties:
+      from_date:
+        type: string
+      to_date:
+        type: string
+      userid:
+        type: integer
+    required:
+    - from_date
+    - to_date
+    - userid
+    type: object
+  models.HydrationRequest:
+    properties:
+      device_type:
+        type: integer
+      height:
+        type: number
+      image_id:
+        type: integer
+      image_path:
+        type: string
+      sweat_position:
+        type: number
+      time_taken:
+        type: number
+      userid:
+        type: integer
+      weight:
+        type: number
+    required:
+    - device_type
+    - height
+    - sweat_position
+    - time_taken
+    - userid
+    - weight
+    type: object
+  models.ImageUploadRequest:
+    properties:
+      image_path:
+        type: string
+      userid:
+        type: integer
+    required:
+    - image_path
+    - userid
+    type: object
+  models.LoginRequest:
+    description: Login request data structure
+    properties:
+      cnumber:
+        description: '@Description User''s contact number (required)'
+        example: "1234567890"
+        type: string
+      userpin:
+        description: '@Description User''s PIN/password (required)'
+        example: test@123
+        type: string
+    required:
+    - cnumber
+    - userpin
+    type: object
+  models.RegisterRequest:
+    description: User registration request data structure
+    properties:
+      age:
+        description: '@Description User''s age in years'
+        example: 25
+        type: integer
+      cnumber:
+        description: '@Description User''s contact number (required)'
+        example: "1234567890"
+        type: string
+      gender:
+        description: '@Description User''s gender'
+        example: Male
+        type: string
+      height:
+        description: '@Description User''s height in cm'
+        example: 170.5
+        type: number
+      username:
+        description: '@Description User''s display name (required)'
+        example: John Doe
+        type: string
+      userpin:
+        description: '@Description User''s PIN/password (required)'
+        example: test@123
+        type: string
+      weight:
+        description: '@Description User''s weight in kg'
+        example: 70
+        type: number
+    required:
+    - cnumber
+    - username
+    - userpin
+    type: object
+  models.SummaryRequest:
+    properties:
+      sweat_position:
+        type: number
+    required:
+    - sweat_position
+    type: object
+  models.UpdateHydrationRequest:
+    properties:
+      bmi:
+        type: number
+      device_type:
+        type: integer
+      height:
+        type: number
+      id:
+        type: integer
+      sweat_loss:
+        type: number
+      sweat_position:
+        type: number
+      sweat_rate:
+        type: number
+      tbsa:
+        type: number
+      time_taken:
+        type: number
+      weight:
+        type: number
+    required:
+    - id
+    type: object
+  models.UpdateImagePathRequest:
+    properties:
+      image_id:
+        type: integer
+      image_path:
+        type: string
+      userid:
+        type: integer
+    required:
+    - image_id
+    - image_path
+    - userid
+    type: object
+  models.UpdateSweatDataRequest:
+    properties:
+      image_id:
+        type: integer
+      sweat_loss:
+        type: number
+      sweat_rate:
+        type: number
+      userid:
+        type: integer
+    required:
+    - image_id
+    - sweat_loss
+    - sweat_rate
+    - userid
+    type: object
+host: localhost:8500
+info:
+  contact:
+    email: support@innovosens.com
+    name: InnovoSens Support
+    url: https://innovosens.com
+  description: This is the InnovoSens REST API for hydration and sweat analysis data
+    collection.
+  license:
+    name: InnovoSens License
+    url: https://innovosens.com/license
+  termsOfService: https://innovosens.com/terms
+  title: InnovoSens API
+  version: "1.0"
+paths:
+  /Services/getBannerImages:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve banner images
+      parameters:
+      - description: Empty request
+        in: body
+        name: request
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get banner images
+      tags:
+      - Data Retrieval
+  /Services/getDevices:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve available device types
+      parameters:
+      - description: Empty request
+        in: body
+        name: request
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get devices
+      tags:
+      - Data Retrieval
+  /Services/getHomeImages:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve home page images
+      parameters:
+      - description: Empty request
+        in: body
+        name: request
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get home images
+      tags:
+      - Data Retrieval
+  /Services/innovologin:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user with contact number and password. Returns JWT
+        token valid for 30 days.
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful with JWT token
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.APIResponse'
+                jwt_token:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: User login
+      tags:
+      - Authentication
+  /Services/innovoregister:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: Registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: User registration
+      tags:
+      - Authentication
+  /Services/protected/getClientHistory:
+    post:
+      consumes:
+      - application/json
+      description: Get recent history for a client
+      parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get client history
+      tags:
+      - Reports
+  /Services/protected/getElectrolyteHistory:
+    post:
+      consumes:
+      - application/json
+      description: Get electrolyte history for a date range (returns only creation_datetime
+        and image_id)
+      parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: History request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.HistoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get electrolyte history
+      tags:
+      - Reports
+  /Services/protected/getHyderartionHistory:
+    post:
+      consumes:
+      - application/json
+      description: Get hydration history for a date range with inclusive date handling
+      parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: History request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.HistoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get hydration history
+      tags:
+      - Reports
+  /Services/protected/getSummary:
+    post:
+      consumes:
+      - application/json
+      description: Get summary based on sweat position using sweat_summary table
+      parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Summary request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SummaryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get summary
+      tags:
+      - Reports
+  /Services/protected/getSweatImages:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve sweat analysis images with metadata
+      parameters:
+      - description: Empty request
+        in: body
+        name: request
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get sweat images
+      tags:
+      - Data Retrieval
+  /Services/protected/getUserDetailedSummary:
+    post:
+      consumes:
+      - application/json
+      description: Get detailed summary with multiple data sources (hydration data,
+        summary, sweat summary, sweat rate summary)
+      parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Detailed summary request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.DetailedSummaryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get detailed summary
+      tags:
+      - Reports
+  /Services/protected/innovoHyderation:
+    post:
+      consumes:
+      - application/json
+      description: Record basic hydration data with automatic BMI, TBSA, sweat loss,
+        and sweat rate calculations
+      parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Hydration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.HydrationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Record hydration data
+      tags:
+      - Hydration
+  /Services/protected/newinnovoHyderation:
+    post:
+      consumes:
+      - application/json
+      description: Record enhanced hydration data with additional calculations and
+        summaries
+      parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Enhanced hydration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.HydrationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Record enhanced hydration data
+      tags:
+      - Hydration
+  /Services/protected/updateHyderationValue:
+    post:
+      consumes:
+      - application/json
+      description: Update existing hydration data
+      parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Updated hydration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateHydrationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Update hydration data
+      tags:
+      - Hydration
+  /Services/protected/updateInnovoImagePath:
+    post:
+      consumes:
+      - application/json
+      description: Update the path of an existing image
+      parameters:
+      - description: Image path update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateImagePathRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Update image path
+      tags:
+      - File Management
+  /Services/protected/updateSweatData:
+    post:
+      consumes:
+      - application/json
+      description: Update sweat analysis data
+      parameters:
+      - description: Bearer JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Sweat data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateSweatDataRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Update sweat data
+      tags:
+      - Hydration
+  /Services/protected/uploadInnovoImage:
+    post:
+      consumes:
+      - application/json
+      description: Upload an image and save the path
+      parameters:
+      - description: Image upload request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ImageUploadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Upload image
+      tags:
+      - File Management
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
