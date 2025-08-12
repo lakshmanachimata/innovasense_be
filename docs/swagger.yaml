@@ -106,16 +106,6 @@ definitions:
     - username
     - weight
     type: object
-  models.ImageUploadRequest:
-    properties:
-      cnumber:
-        type: string
-      username:
-        type: string
-    required:
-    - cnumber
-    - username
-    type: object
   models.LoginRequest:
     description: Login request data structure
     properties:
@@ -756,12 +746,6 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: User identity information
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.ImageUploadRequest'
       - description: Image file to upload
         in: formData
         name: image

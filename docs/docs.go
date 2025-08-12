@@ -769,15 +769,6 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "User identity information",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.ImageUploadRequest"
-                        }
-                    },
-                    {
                         "type": "file",
                         "description": "Image file to upload",
                         "name": "image",
@@ -950,21 +941,6 @@ const docTemplate = `{
                 },
                 "weight": {
                     "type": "number"
-                }
-            }
-        },
-        "models.ImageUploadRequest": {
-            "type": "object",
-            "required": [
-                "cnumber",
-                "username"
-            ],
-            "properties": {
-                "cnumber": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
                 }
             }
         },
