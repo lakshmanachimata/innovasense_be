@@ -65,6 +65,7 @@ innovasense_be
 *.rar
 *.7z
 *__debug_bin*
+*main*
 # Image files (if you don't want to track them)
 # *.jpg
 # *.jpeg
