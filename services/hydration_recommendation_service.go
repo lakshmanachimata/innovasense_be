@@ -49,7 +49,7 @@ func (s *HydrationRecommendationService) GetHydrationRecommendation(
 		if err != nil {
 			// User exists in org_users but not in users_master, create in users_master
 			userID, err = s.orgService.CreateUserInMaster(
-				req.Name, req.Contact, req.Gender, req.Age, req.Height, req.Weight,
+				req.Name, req.Contact, req.Gender, req.Age, req.Height, req.Weight, org.ID,
 			)
 			if err != nil {
 				return nil, fmt.Errorf("failed to create user in master: %v", err)
@@ -63,7 +63,7 @@ func (s *HydrationRecommendationService) GetHydrationRecommendation(
 		}
 
 		userID, err = s.orgService.CreateUserInMaster(
-			req.Name, req.Contact, req.Gender, req.Age, req.Height, req.Weight,
+			req.Name, req.Contact, req.Gender, req.Age, req.Height, req.Weight, org.ID,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create user in master: %v", err)

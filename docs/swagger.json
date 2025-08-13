@@ -98,6 +98,78 @@
                 }
             }
         },
+        "/Services/getHistoricalData": {
+            "post": {
+                "description": "Get historical data for a user based on organization credentials",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Historical Data"
+                ],
+                "summary": "Get historical data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API Key",
+                        "name": "apikey",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Secret Key",
+                        "name": "secretkey",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Historical data request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.HistoricalDataRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/Services/getHomeImages": {
             "post": {
                 "description": "Retrieve home page images",
@@ -1022,6 +1094,26 @@
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.HistoricalDataRequest": {
+            "type": "object",
+            "required": [
+                "contact"
+            ],
+            "properties": {
+                "contact": {
+                    "description": "Contact number or email",
+                    "type": "string"
+                },
+                "from_date": {
+                    "description": "Optional from date",
+                    "type": "string"
+                },
+                "to_date": {
+                    "description": "Optional to date",
                     "type": "string"
                 }
             }

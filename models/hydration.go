@@ -169,3 +169,23 @@ type OrgUser struct {
 	UserName string `json:"user_name" db:"user_name"`
 	OrgID    int    `json:"org_id" db:"org_id"`
 }
+
+// HistoricalDataRequest represents the request for historical data
+type HistoricalDataRequest struct {
+	Contact  string `json:"contact" binding:"required"` // Contact number or email
+	FromDate string `json:"from_date"`                   // Optional from date
+	ToDate   string `json:"to_date"`                     // Optional to date
+}
+
+// HistoricalDataResponse represents the historical data response
+type HistoricalDataResponse struct {
+	SweatPosition []HistoricalDataItem `json:"sweat_position"`
+	SweatRate     []HistoricalDataItem `json:"sweat_rate"`
+	SweatLoss     []HistoricalDataItem `json:"sweat_loss"`
+}
+
+// HistoricalDataItem represents a single historical data item
+type HistoricalDataItem struct {
+	Datetime string  `json:"datetime"`
+	Value    float64 `json:"value"`
+}

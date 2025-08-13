@@ -60,6 +60,14 @@ func SetupRoutes(r *gin.Engine) {
 
 	api.POST("/getHydrationRecommendation", hydrationRecommendationController.GetHydrationRecommendation)
 
+	// Initialize services for historical data
+	historicalDataService := services.NewHistoricalDataService(db)
+	historicalDataController := controllers.NewHistoricalDataController(
+		historicalDataService, orgService,
+	)
+
+	api.POST("/getHistoricalData", historicalDataController.GetHistoricalData)
+
 	// Protected endpoints (JWT authentication required)
 	protectedGroup := api.Group("protected")
 	protectedGroup.Use(middleware.JWTAuthMiddleware())

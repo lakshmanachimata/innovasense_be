@@ -116,13 +116,13 @@ func (s *OrganizationService) GetUserIDByContact(contact string) (int, error) {
 }
 
 // CreateUserInMaster creates a new user in users_master table
-func (s *OrganizationService) CreateUserInMaster(name, contact, gender string, age int, height, weight float64) (int, error) {
+func (s *OrganizationService) CreateUserInMaster(name, contact, gender string, age int, height, weight float64, orgID int) (int, error) {
 	query := `
-		INSERT INTO users_master (cnumber, username, gender, age, height, weight, ustatus, role_id) 
-		VALUES (?, ?, ?, ?, ?, ?, 0, 2)
+		INSERT INTO users_master (cnumber, username, gender, age, height, weight, ustatus, role_id, org_id) 
+		VALUES (?, ?, ?, ?, ?, ?, 0, 2, ?)
 	`
 
-	result, err := s.db.Exec(query, contact, name, gender, age, height, weight)
+	result, err := s.db.Exec(query, contact, name, gender, age, height, weight, orgID)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create user in master: %v", err)
 	}
@@ -133,4 +133,31 @@ func (s *OrganizationService) CreateUserInMaster(name, contact, gender string, a
 	}
 
 	return int(userID), nil
+}
+
+// CheckUserExistsByContact checks if a user exists by contact for a specific organization
+func (s *OrganizationService) CheckUserExistsByContact(contact string, orgID int) (*models.OrgUser, error) {
+	query := `
+		SELECT id, email_id, user_pwd, user_name, org_id 
+		FROM org_users 
+		WHERE email_id = ? AND org_id = ?
+	`
+
+	var user models.OrgUser
+	err := s.db.QueryRow(query, contact, orgID).Scan(
+		&user.ID,
+		&user.EmailID,
+		&user.UserPwd,
+		&user.UserName,
+		&user.OrgID,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // User doesn't exist
+		}
+		return nil, fmt.Errorf("database error: %v", err)
+	}
+
+	return &user, nil
 }

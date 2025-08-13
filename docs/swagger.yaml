@@ -80,6 +80,20 @@ definitions:
     - cnumber
     - username
     type: object
+  models.HistoricalDataRequest:
+    properties:
+      contact:
+        description: Contact number or email
+        type: string
+      from_date:
+        description: Optional from date
+        type: string
+      to_date:
+        description: Optional to date
+        type: string
+    required:
+    - contact
+    type: object
   models.HistoryRequest:
     properties:
       cnumber:
@@ -537,6 +551,54 @@ paths:
       summary: Get devices
       tags:
       - Data Retrieval
+  /Services/getHistoricalData:
+    post:
+      consumes:
+      - application/json
+      description: Get historical data for a user based on organization credentials
+      parameters:
+      - description: API Key
+        in: header
+        name: apikey
+        required: true
+        type: string
+      - description: Secret Key
+        in: header
+        name: secretkey
+        required: true
+        type: string
+      - description: Historical data request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.HistoricalDataRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get historical data
+      tags:
+      - Historical Data
   /Services/getHomeImages:
     post:
       consumes:
