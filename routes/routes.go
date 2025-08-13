@@ -1,8 +1,10 @@
 package routes
 
 import (
+	"innovasense_be/config"
 	"innovasense_be/controllers"
 	"innovasense_be/middleware"
+	"innovasense_be/services"
 	"log"
 	"os"
 
@@ -43,6 +45,20 @@ func SetupRoutes(r *gin.Engine) {
 	api.POST("/innovoregister", authController.InnovoRegister)
 	api.POST("/getBannerImages", commonController.GetBannerImages)
 	api.POST("/getHomeImages", commonController.GetHomeImages)
+	api.POST("/getDevices", commonController.GetDevices)
+	// Initialize services for hydration recommendation
+	db := config.GetDB()
+	hydrationService := services.NewHydrationService()
+	orgService := services.NewOrganizationService(db)
+	userService := services.NewUserService()
+	hydrationRecommendationService := services.NewHydrationRecommendationService(
+		hydrationService, orgService, userService,
+	)
+	hydrationRecommendationController := controllers.NewHydrationRecommendationController(
+		hydrationRecommendationService,
+	)
+
+	api.POST("/getHydrationRecommendation", hydrationRecommendationController.GetHydrationRecommendation)
 
 	// Protected endpoints (JWT authentication required)
 	protectedGroup := api.Group("protected")

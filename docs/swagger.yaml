@@ -32,6 +32,16 @@ definitions:
       users:
         description: '@Description Users list when applicable'
     type: object
+  models.ClientHistoryRequest:
+    properties:
+      cnumber:
+        type: string
+      username:
+        type: string
+    required:
+    - cnumber
+    - username
+    type: object
   models.DetailedSummaryRequest:
     properties:
       cnumber:
@@ -44,6 +54,21 @@ definitions:
     - cnumber
     - id
     - username
+    type: object
+  models.EnhancedHydrationResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.HydrationData'
+      id:
+        type: integer
+      sweatratesummary:
+        items:
+          $ref: '#/definitions/models.SweatRateSummary'
+        type: array
+      sweatsummary:
+        items:
+          $ref: '#/definitions/models.SweatImage'
+        type: array
     type: object
   models.GetSweatImagesRequest:
     properties:
@@ -73,6 +98,66 @@ definitions:
     - to_date
     - userid
     - username
+    type: object
+  models.HydrationData:
+    properties:
+      bmi:
+        type: number
+      creation_datetime:
+        type: string
+      device_type:
+        type: integer
+      height:
+        type: number
+      id:
+        type: integer
+      image_id:
+        type: integer
+      image_path:
+        type: string
+      sweat_loss:
+        type: number
+      sweat_position:
+        type: number
+      sweat_rate:
+        type: number
+      tbsa:
+        type: number
+      time_taken:
+        type: number
+      user_id:
+        type: integer
+      weight:
+        type: number
+    type: object
+  models.HydrationRecommendationRequest:
+    properties:
+      age:
+        type: integer
+      contact:
+        description: Contact number or email
+        type: string
+      gender:
+        type: string
+      height:
+        type: number
+      name:
+        type: string
+      sweat_position:
+        type: number
+      weight:
+        type: number
+      workout_time:
+        type: number
+    required:
+    - age
+    - contact
+    - gender
+    - height
+    - name
+    - sweat_position
+    - weight
+    - workout_time
     type: object
   models.HydrationRequest:
     properties:
@@ -240,6 +325,42 @@ definitions:
     - cnumber
     - sweat_position
     - username
+    type: object
+  models.SweatImage:
+    properties:
+      colorcode:
+        type: string
+      id:
+        type: integer
+      image_path:
+        type: string
+      implications:
+        type: string
+      recomm:
+        type: string
+      result:
+        type: string
+      strategy:
+        type: string
+      sweat_range:
+        type: string
+    type: object
+  models.SweatRateSummary:
+    properties:
+      color:
+        type: string
+      comments:
+        type: string
+      high_limit:
+        type: number
+      hyd_status:
+        type: string
+      id:
+        type: integer
+      low_limit:
+        type: number
+      recomm:
+        type: string
     type: object
   models.SweatRateSummaryItem:
     properties:
@@ -442,6 +563,51 @@ paths:
       summary: Get home images
       tags:
       - Data Retrieval
+  /Services/getHydrationRecommendation:
+    post:
+      consumes:
+      - application/json
+      description: Get hydration recommendation based on user data and organization
+        credentials
+      parameters:
+      - description: API Key
+        in: header
+        name: apikey
+        required: true
+        type: string
+      - description: Secret Key
+        in: header
+        name: secretkey
+        required: true
+        type: string
+      - description: Hydration recommendation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.HydrationRecommendationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.EnhancedHydrationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: Get hydration recommendation
+      tags:
+      - Hydration
   /Services/innovologin:
     post:
       consumes:
@@ -513,6 +679,12 @@ paths:
         name: Authorization
         required: true
         type: string
+      - description: Client history request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ClientHistoryRequest'
       produces:
       - application/json
       responses:

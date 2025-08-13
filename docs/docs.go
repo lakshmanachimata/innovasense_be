@@ -144,6 +144,72 @@ const docTemplate = `{
                 }
             }
         },
+        "/Services/getHydrationRecommendation": {
+            "post": {
+                "description": "Get hydration recommendation based on user data and organization credentials",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Hydration"
+                ],
+                "summary": "Get hydration recommendation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API Key",
+                        "name": "apikey",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Secret Key",
+                        "name": "secretkey",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Hydration recommendation request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.HydrationRecommendationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.EnhancedHydrationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.APIResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/Services/innovologin": {
             "post": {
                 "description": "Authenticate a user with contact number and password. Returns JWT token valid for 30 days.",
@@ -259,6 +325,15 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "description": "Client history request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ClientHistoryRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -885,6 +960,21 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ClientHistoryRequest": {
+            "type": "object",
+            "required": [
+                "cnumber",
+                "username"
+            ],
+            "properties": {
+                "cnumber": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "models.DetailedSummaryRequest": {
             "type": "object",
             "required": [
@@ -901,6 +991,29 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "models.EnhancedHydrationResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.HydrationData"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "sweatratesummary": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SweatRateSummary"
+                    }
+                },
+                "sweatsummary": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SweatImage"
+                    }
                 }
             }
         },
@@ -943,6 +1056,93 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "models.HydrationData": {
+            "type": "object",
+            "properties": {
+                "bmi": {
+                    "type": "number"
+                },
+                "creation_datetime": {
+                    "type": "string"
+                },
+                "device_type": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_id": {
+                    "type": "integer"
+                },
+                "image_path": {
+                    "type": "string"
+                },
+                "sweat_loss": {
+                    "type": "number"
+                },
+                "sweat_position": {
+                    "type": "number"
+                },
+                "sweat_rate": {
+                    "type": "number"
+                },
+                "tbsa": {
+                    "type": "number"
+                },
+                "time_taken": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.HydrationRecommendationRequest": {
+            "type": "object",
+            "required": [
+                "age",
+                "contact",
+                "gender",
+                "height",
+                "name",
+                "sweat_position",
+                "weight",
+                "workout_time"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "contact": {
+                    "description": "Contact number or email",
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sweat_position": {
+                    "type": "number"
+                },
+                "weight": {
+                    "type": "number"
+                },
+                "workout_time": {
+                    "type": "number"
                 }
             }
         },
@@ -1178,6 +1378,61 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SweatImage": {
+            "type": "object",
+            "properties": {
+                "colorcode": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_path": {
+                    "type": "string"
+                },
+                "implications": {
+                    "type": "string"
+                },
+                "recomm": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string"
+                },
+                "strategy": {
+                    "type": "string"
+                },
+                "sweat_range": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SweatRateSummary": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "comments": {
+                    "type": "string"
+                },
+                "high_limit": {
+                    "type": "number"
+                },
+                "hyd_status": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "low_limit": {
+                    "type": "number"
+                },
+                "recomm": {
                     "type": "string"
                 }
             }

@@ -567,6 +567,7 @@ func (c *HydrationController) GetHydrationSummaryScreen(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer JWT Token"
+// @Param request body models.ClientHistoryRequest true "Client history request"
 // @Success 200 {object} models.APIResponse
 // @Failure 400 {object} models.APIResponse
 // @Router /Services/protected/getClientHistory [post]
@@ -577,6 +578,32 @@ func (c *HydrationController) GetClientHistory(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, models.APIResponse{
 			Code:    1,
 			Message: "User not authenticated",
+		})
+		return
+	}
+
+	var req models.ClientHistoryRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Invalid request data",
+		})
+		return
+	}
+
+	// Validate cnumber and username from request body against JWT claims
+	if req.CNumber != claims.CNumber {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "cnumber in request body does not match authenticated user",
+		})
+		return
+	}
+
+	if req.Username != claims.UserName {
+		ctx.JSON(http.StatusForbidden, models.APIResponse{
+			Code:    1,
+			Message: "username in request body does not match authenticated user",
 		})
 		return
 	}
