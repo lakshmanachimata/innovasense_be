@@ -10,7 +10,8 @@ import (
 )
 
 type UserService struct {
-	db *sql.DB
+	db             *sql.DB
+	encryptService *EncryptDecryptService
 }
 
 func NewUserService() *UserService {
@@ -20,12 +21,20 @@ func NewUserService() *UserService {
 	}
 	log.Println("UserService initialized with database connection")
 	return &UserService{
-		db: db,
+		db:             db,
+		encryptService: NewEncryptDecryptService(),
 	}
 }
 
 // CheckUser validates user credentials
 func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
+	// First encrypt the email to search in database
+	encryptedEmail, err := s.encryptService.GetEncryptData(email)
+	if err != nil {
+		log.Printf("Error encrypting email for search: %v", err)
+		return nil, errors.New("invalid credentials")
+	}
+
 	query := `
 		SELECT id, email, cnumber, userpin, username, gender, age, height, weight, 
 		       role_id, ustatus, creation_datetime
@@ -35,9 +44,10 @@ func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
 
 	var user models.User
 	var cnumber sql.NullString
+	var encryptedStoredEmail, encryptedStoredUserpin string
 	var creationDatetimeStr string
-	err := s.db.QueryRow(query, email).Scan(
-		&user.ID, &user.Email, &cnumber, &user.Userpin, &user.Username, &user.Gender,
+	err = s.db.QueryRow(query, encryptedEmail).Scan(
+		&user.ID, &encryptedStoredEmail, &cnumber, &encryptedStoredUserpin, &user.Username, &user.Gender,
 		&user.Age, &user.Height, &user.Weight, &user.RoleID, &user.UStatus,
 		&creationDatetimeStr,
 	)
@@ -49,40 +59,48 @@ func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
 		return nil, err
 	}
 
-	// Handle nullable contact number
-	if cnumber.Valid {
-		user.CNumber = &cnumber.String
+	// Decrypt stored values for validation
+	decryptedEmail, err := s.encryptService.GetDecryptData(encryptedStoredEmail)
+	if err != nil {
+		log.Printf("Error decrypting stored email: %v", err)
+		return nil, errors.New("invalid credentials")
 	}
 
-	// Decrypt the stored userpin and compare with the input
-	// encryptService := NewEncryptDecryptService()
-	// fmt.Printf("Attempting to decrypt userpin: %s\n", user.Userpin)
-	// decryptedUserpin, err := encryptService.GetDecryptData(user.Userpin)
-	// if err != nil {
-	// 	fmt.Printf("Decryption error: %v\n", err)
-	// 	return nil, errors.New("invalid credentials")
-	// }
-	// fmt.Printf("Decrypted userpin: %s, Input userpin: %s\n", decryptedUserpin, userpin)
+	decryptedUserpin, err := s.encryptService.GetDecryptData(encryptedStoredUserpin)
+	if err != nil {
+		log.Printf("Error decrypting stored userpin: %v", err)
+		return nil, errors.New("invalid credentials")
+	}
 
-	// if userpin != decryptedUserpin {
-	// 	return nil, errors.New("invalid credentials")
-	// }
+	// Set decrypted values in user object
+	user.Email = decryptedEmail
+	user.Userpin = decryptedUserpin
 
-	// Parse the creation_datetime string to time.Time
-	if creationDatetimeStr != "" {
-		parsedTime, err := time.Parse("2006-01-02 15:04:05.999999", creationDatetimeStr)
+	// Handle nullable cnumber
+	if cnumber.Valid {
+		// Decrypt cnumber if it exists
+		decryptedCNumber, err := s.encryptService.GetDecryptData(cnumber.String)
 		if err != nil {
-			// Try alternative format without microseconds
-			parsedTime, err := time.Parse("2006-01-02 15:04:05", creationDatetimeStr)
-			if err != nil {
-				// If parsing fails, set to zero time
-				user.CreationDatetime = time.Time{}
-			} else {
-				user.CreationDatetime = parsedTime
-			}
+			log.Printf("Error decrypting stored cnumber: %v", err)
+			user.CNumber = nil
 		} else {
+			user.CNumber = &decryptedCNumber
+		}
+	} else {
+		user.CNumber = nil
+	}
+
+	// Parse creation datetime
+	if creationDatetimeStr != "" {
+		parsedTime, err := time.Parse("2006-01-02 15:04:05", creationDatetimeStr)
+		if err == nil {
 			user.CreationDatetime = parsedTime
 		}
+	}
+
+	// Validate credentials
+	if decryptedEmail != email || decryptedUserpin != userpin {
+		return nil, errors.New("invalid credentials")
 	}
 
 	return &user, nil
@@ -140,6 +158,13 @@ func (s *UserService) CheckPIN(id int, userpin string) (*models.User, error) {
 
 // ValidateUser checks if user exists and is active
 func (s *UserService) ValidateUser(email string) (*models.User, error) {
+	// Encrypt email to search in database
+	encryptedEmail, err := s.encryptService.GetEncryptData(email)
+	if err != nil {
+		log.Printf("Error encrypting email for validation: %v", err)
+		return nil, err
+	}
+
 	query := `
 		SELECT id, email, cnumber, userpin, username, gender, age, height, weight, 
 		       role_id, ustatus, creation_datetime
@@ -149,9 +174,10 @@ func (s *UserService) ValidateUser(email string) (*models.User, error) {
 
 	var user models.User
 	var cnumber sql.NullString
+	var encryptedStoredEmail, encryptedStoredUserpin string
 	var creationDatetimeStr string
-	err := s.db.QueryRow(query, email).Scan(
-		&user.ID, &user.Email, &cnumber, &user.Userpin, &user.Username, &user.Gender,
+	err = s.db.QueryRow(query, encryptedEmail).Scan(
+		&user.ID, &encryptedStoredEmail, &cnumber, &encryptedStoredUserpin, &user.Username, &user.Gender,
 		&user.Age, &user.Height, &user.Weight, &user.RoleID, &user.UStatus,
 		&creationDatetimeStr,
 	)
@@ -163,9 +189,35 @@ func (s *UserService) ValidateUser(email string) (*models.User, error) {
 		return nil, err
 	}
 
-	// Handle nullable contact number
+	// Decrypt stored values
+	decryptedEmail, err := s.encryptService.GetDecryptData(encryptedStoredEmail)
+	if err != nil {
+		log.Printf("Error decrypting stored email: %v", err)
+		return nil, err
+	}
+
+	decryptedUserpin, err := s.encryptService.GetDecryptData(encryptedStoredUserpin)
+	if err != nil {
+		log.Printf("Error decrypting stored userpin: %v", err)
+		return nil, err
+	}
+
+	// Set decrypted values in user object
+	user.Email = decryptedEmail
+	user.Userpin = decryptedUserpin
+
+	// Handle nullable cnumber
 	if cnumber.Valid {
-		user.CNumber = &cnumber.String
+		// Decrypt cnumber if it exists
+		decryptedCNumber, err := s.encryptService.GetDecryptData(cnumber.String)
+		if err != nil {
+			log.Printf("Error decrypting stored cnumber: %v", err)
+			user.CNumber = nil
+		} else {
+			user.CNumber = &decryptedCNumber
+		}
+	} else {
+		user.CNumber = nil
 	}
 
 	// Parse the creation_datetime string to time.Time
@@ -192,14 +244,37 @@ func (s *UserService) ValidateUser(email string) (*models.User, error) {
 
 // RegisterUser creates a new user
 func (s *UserService) RegisterUser(req *models.RegisterRequest) (int, error) {
+	// Encrypt sensitive data before storing
+	encryptedEmail, err := s.encryptService.GetEncryptData(req.Email)
+	if err != nil {
+		log.Printf("Error encrypting email: %v", err)
+		return 0, err
+	}
+
+	encryptedUserpin, err := s.encryptService.GetEncryptData(req.Userpin)
+	if err != nil {
+		log.Printf("Error encrypting userpin: %v", err)
+		return 0, err
+	}
+
+	var encryptedCNumber *string
+	if req.CNumber != nil {
+		encrypted, err := s.encryptService.GetEncryptData(*req.CNumber)
+		if err != nil {
+			log.Printf("Error encrypting cnumber: %v", err)
+			return 0, err
+		}
+		encryptedCNumber = &encrypted
+	}
+
 	query := `
 		INSERT INTO users_master (email, cnumber, userpin, username, gender, age, 
 		                         height, weight, ustatus, role_id)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 2)
 	`
 
-	log.Printf("Registering user: %+v", req)
-	result, err := s.db.Exec(query, req.Email, req.CNumber, req.Userpin, req.Username,
+	log.Printf("Registering user with encrypted data - Email: %s, Username: %s", req.Email, req.Username)
+	result, err := s.db.Exec(query, encryptedEmail, encryptedCNumber, encryptedUserpin, req.Username,
 		req.Gender, req.Age, req.Height, req.Weight)
 	if err != nil {
 		log.Printf("Database error during registration: %v", err)

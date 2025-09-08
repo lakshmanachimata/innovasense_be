@@ -200,7 +200,7 @@ func (c *AuthController) InnovoRegister(ctx *gin.Context) {
 		Weight:   encryptedReq.Weight,
 	}
 
-	// Check if user already exists
+	// Check if user already exists (service will handle encryption for lookup)
 	existingUser, _ := c.userService.ValidateUser(req.Email)
 	if existingUser != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
