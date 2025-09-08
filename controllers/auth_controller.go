@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"fmt"
 	"innovasense_be/models"
 	"innovasense_be/services"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +25,28 @@ func NewAuthController() *AuthController {
 type EncryptedLoginRequest struct {
 	Email   string `json:"email"`
 	Userpin string `json:"userpin"`
+}
+
+// Helper function to check if a string is valid base64
+func isBase64(s string) bool {
+	_, err := base64.StdEncoding.DecodeString(s)
+	return err == nil && len(s) > 0 && !strings.Contains(s, " ")
+}
+
+// Helper function to safely decrypt or return plain text
+func safeDecrypt(encryptService *services.EncryptDecryptService, data string) (string, error) {
+	// If it's not base64, return as plain text
+	if !isBase64(data) {
+		return data, nil
+	}
+
+	// Try to decrypt, if it fails, return as plain text
+	decrypted, err := encryptService.GetDecryptData(data)
+	if err != nil {
+		// If decryption fails, assume it's plain text
+		return data, nil
+	}
+	return decrypted, nil
 }
 
 // InnovoLogin handles user login
@@ -48,26 +72,26 @@ func (c *AuthController) InnovoLogin(ctx *gin.Context) {
 	// Initialize encryption service
 	encryptService := services.NewEncryptDecryptService()
 
-	// Decrypt the encrypted fields
-	decryptedEmail, err := encryptService.GetDecryptData(encryptedReq.Email)
+	// Safely decrypt or use plain text
+	email, err := safeDecrypt(encryptService, encryptedReq.Email)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Failed to decrypt email: " + err.Error(),
+			Message: "Failed to process email: " + err.Error(),
 		})
 		return
 	}
 
-	decryptedUserpin, err := encryptService.GetDecryptData(encryptedReq.Userpin)
+	userpin, err := safeDecrypt(encryptService, encryptedReq.Userpin)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Failed to decrypt userpin: " + err.Error(),
+			Message: "Failed to process userpin: " + err.Error(),
 		})
 		return
 	}
 
-	user, err := c.userService.CheckUser(decryptedEmail, decryptedUserpin)
+	user, err := c.userService.CheckUser(email, userpin)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
@@ -146,54 +170,54 @@ func (c *AuthController) InnovoRegister(ctx *gin.Context) {
 	// Initialize encryption service
 	encryptService := services.NewEncryptDecryptService()
 
-	// Decrypt the encrypted fields
-	decryptedEmail, err := encryptService.GetDecryptData(encryptedReq.Email)
+	// Safely decrypt or use plain text for all fields
+	email, err := safeDecrypt(encryptService, encryptedReq.Email)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Failed to decrypt email: " + err.Error(),
+			Message: "Failed to process email: " + err.Error(),
 		})
 		return
 	}
 
-	decryptedUsername, err := encryptService.GetDecryptData(encryptedReq.Username)
+	username, err := safeDecrypt(encryptService, encryptedReq.Username)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Failed to decrypt username: " + err.Error(),
+			Message: "Failed to process username: " + err.Error(),
 		})
 		return
 	}
 
-	decryptedUserpin, err := encryptService.GetDecryptData(encryptedReq.Userpin)
+	userpin, err := safeDecrypt(encryptService, encryptedReq.Userpin)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Failed to decrypt userpin: " + err.Error(),
+			Message: "Failed to process userpin: " + err.Error(),
 		})
 		return
 	}
 
-	// Decrypt contact number if it exists
-	var decryptedCNumber *string
+	// Process contact number if it exists
+	var cNumber *string
 	if encryptedReq.CNumber != nil {
-		decrypted, err := encryptService.GetDecryptData(*encryptedReq.CNumber)
+		decrypted, err := safeDecrypt(encryptService, *encryptedReq.CNumber)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, models.APIResponse{
 				Code:    1,
-				Message: "Failed to decrypt contact number: " + err.Error(),
+				Message: "Failed to process contact number: " + err.Error(),
 			})
 			return
 		}
-		decryptedCNumber = &decrypted
+		cNumber = &decrypted
 	}
 
-	// Create the decrypted request
+	// Create the request
 	req := models.RegisterRequest{
-		Username: decryptedUsername,
-		Email:    decryptedEmail,
-		CNumber:  decryptedCNumber,
-		Userpin:  decryptedUserpin,
+		Username: username,
+		Email:    email,
+		CNumber:  cNumber,
+		Userpin:  userpin,
 		Age:      encryptedReq.Age,
 		Gender:   encryptedReq.Gender,
 		Height:   encryptedReq.Height,

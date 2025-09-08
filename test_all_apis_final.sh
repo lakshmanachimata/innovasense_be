@@ -47,54 +47,54 @@ test_api "GET" "/health" "" "" "Health Check API"
 # Test 2: Root Endpoint
 test_api "GET" "/" "" "" "Root Endpoint"
 
-# Test 3: User Registration (New User)
+# Test 3: User Registration (New User) - Encrypted Data
 test_api "POST" "/Services/innovoregister" '{
-    "email": "finaltest1@innosense.com",
-    "userpin": "test123",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "userpin": "8UkrqMI8cqtn+jndvnjAoA==",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "gender": "Male",
     "age": 25,
     "height": 170.5,
     "weight": 70.0
-}' "" "User Registration - New User"
+}' "" "User Registration - New User (Encrypted)"
 
-# Test 4: User Registration (With Contact Number)
+# Test 4: User Registration (With Contact Number) - Encrypted Data
 test_api "POST" "/Services/innovoregister" '{
-    "email": "finaltest2@innosense.com",
-    "cnumber": "+1234567890",
-    "userpin": "test456",
-    "username": "Final Test User 2",
+    "email": "5HfZnB40gzld/98oJ3U4p1HQlwLfY22jxhCzBKoCGsk=",
+    "cnumber": "tkB3SU1u0Q2CaV1wpIJzhA==",
+    "userpin": "aF2GYlwtO9el+uEUho7sOg==",
+    "username": "0V9IWosPznPKXPCZClpoSRqfeDHeOdHdt0N0YDTRD1Y=",
     "gender": "Female",
     "age": 28,
     "height": 165.0,
     "weight": 60.0
-}' "" "User Registration - With Contact Number"
+}' "" "User Registration - With Contact Number (Encrypted)"
 
-# Test 5: User Registration (Duplicate Email)
+# Test 5: User Registration (Duplicate Email) - Encrypted Data
 test_api "POST" "/Services/innovoregister" '{
-    "email": "finaltest1@innosense.com",
-    "userpin": "test789",
-    "username": "Duplicate User",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "userpin": "sh3MNi3dYHfOV6jyEMthog==",
+    "username": "0V9IWosPznPKXPCZClpoSaHcfoa/GooJBeceBRdiXGg=",
     "gender": "Male",
     "age": 30,
     "height": 175.0,
     "weight": 75.0
-}' "" "User Registration - Duplicate Email (Should Fail)"
+}' "" "User Registration - Duplicate Email (Should Fail) (Encrypted)"
 
-# Test 6: User Login (Valid Credentials)
-LOGIN_RESPONSE=$(curl -s -X POST "http://localhost:8500/Services/innovologin" -H "Content-Type: application/json" -d '{"email": "finaltest1@innosense.com", "userpin": "test123"}')
+# Test 6: User Login (Valid Credentials) - Encrypted Data
+LOGIN_RESPONSE=$(curl -s -X POST "http://localhost:8500/Services/innovologin" -H "Content-Type: application/json" -d '{"email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=", "userpin": "8UkrqMI8cqtn+jndvnjAoA=="}')
 JWT_TOKEN=$(echo "$LOGIN_RESPONSE" | jq -r '.jwt_token')
 
 test_api "POST" "/Services/innovologin" '{
-    "email": "finaltest1@innosense.com",
-    "userpin": "test123"
-}' "" "User Login - Valid Credentials"
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "userpin": "8UkrqMI8cqtn+jndvnjAoA=="
+}' "" "User Login - Valid Credentials (Encrypted)"
 
-# Test 7: User Login (Invalid Credentials)
+# Test 7: User Login (Invalid Credentials) - Encrypted Data
 test_api "POST" "/Services/innovologin" '{
-    "email": "nonexistent@innosense.com",
+    "email": "GIQSlzqh445148nIVbKyXnY6u5A0cGWnJUhPC5y7+sk=",
     "userpin": "wrong123"
-}' "" "User Login - Invalid Credentials (Should Fail)"
+}' "" "User Login - Invalid Credentials (Should Fail) (Encrypted)"
 
 # Test 8: Banner Images
 test_api "POST" "/Services/getBannerImages" '{}' "" "Get Banner Images"
@@ -112,8 +112,8 @@ echo "" | tee -a $RESULTS_FILE
 
 # Test 12: Basic Hydration Data Submission
 test_api "POST" "/Services/protected/innovoHyderation" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "userid": 9,
     "weight": 70.0,
     "height": 170.5,
@@ -126,8 +126,8 @@ test_api "POST" "/Services/protected/innovoHyderation" '{
 
 # Test 13: Enhanced Hydration Data Submission
 test_api "POST" "/Services/protected/newinnovoHyderation" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "userid": 9,
     "weight": 70.0,
     "height": 170.5,
@@ -140,8 +140,8 @@ test_api "POST" "/Services/protected/newinnovoHyderation" '{
 
 # Test 14: Update Hydration Value
 test_api "POST" "/Services/protected/updateHyderationValue" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "userid": 9,
     "id": 1,
     "weight": 71.0,
@@ -157,8 +157,8 @@ test_api "POST" "/Services/protected/updateHyderationValue" '{
 
 # Test 15: Update Sweat Data
 test_api "POST" "/Services/protected/updateSweatData" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "userid": 9,
     "image_id": 1,
     "sweat_rate": 40.0,
@@ -167,29 +167,29 @@ test_api "POST" "/Services/protected/updateSweatData" '{
 
 # Test 16: Get Summary
 test_api "POST" "/Services/protected/getSummary" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "sweat_position": 0.6
 }' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get Summary"
 
 # Test 17: Get User Detailed Summary
 test_api "POST" "/Services/protected/getUserDetailedSummary" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "id": 1
 }' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get User Detailed Summary"
 
 # Test 18: Get Hydration Summary Screen
 test_api "POST" "/Services/protected/getHydrationSummaryScreen" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "id": 1
 }' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get Hydration Summary Screen"
 
 # Test 19: Get Client History
 test_api "POST" "/Services/protected/getClientHistory" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "userid": 9,
     "from_date": "2024-01-01",
     "to_date": "2024-12-31"
@@ -197,8 +197,8 @@ test_api "POST" "/Services/protected/getClientHistory" '{
 
 # Test 20: Get Hydration History
 test_api "POST" "/Services/protected/getHyderartionHistory" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "userid": 9,
     "from_date": "2024-01-01",
     "to_date": "2024-12-31"
@@ -206,8 +206,8 @@ test_api "POST" "/Services/protected/getHyderartionHistory" '{
 
 # Test 21: Get Electrolyte History
 test_api "POST" "/Services/protected/getElectrolyteHistory" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "userid": 9,
     "from_date": "2024-01-01",
     "to_date": "2024-12-31"
@@ -215,29 +215,29 @@ test_api "POST" "/Services/protected/getElectrolyteHistory" '{
 
 # Test 22: Get Sweat Images
 test_api "POST" "/Services/protected/getSweatImages" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "userid": 9
 }' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get Sweat Images"
 
 # Test 23: Protected Route (Without JWT Token)
 test_api "POST" "/Services/protected/getSummary" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "sweat_position": 0.6
 }' "" "Protected Route - Without JWT Token (Should Fail)"
 
 # Test 24: Protected Route (With Invalid JWT Token)
 test_api "POST" "/Services/protected/getSummary" '{
-    "email": "finaltest1@innosense.com",
-    "username": "Final Test User 1",
+    "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
+    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
     "sweat_position": 0.6
 }' '-H "Authorization: Bearer invalid.jwt.token"' "Protected Route - With Invalid JWT Token (Should Fail)"
 
 # Test 25: Organization APIs (These should fail due to PostgreSQL placeholder issue)
 test_api "POST" "/Services/getHydrationRecommendation" '{
     "name": "Test User",
-    "contact": "finaltest1@innosense.com",
+    "contact": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
     "gender": "Male",
     "age": 25,
     "sweat_position": 0.5,
@@ -248,7 +248,7 @@ test_api "POST" "/Services/getHydrationRecommendation" '{
 
 # Test 26: Historical Data - Organization API
 test_api "POST" "/Services/getHistoricalData" '{
-    "contact": "finaltest1@innosense.com",
+    "contact": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
     "start_date": "2024-01-01",
     "end_date": "2024-12-31"
 }' '-H "apikey: innosense-api-key-2024" -H "secretkey: innosense-salt-key-2024"' "Historical Data - Organization API (Expected to Fail)"
