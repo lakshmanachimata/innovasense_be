@@ -28,12 +28,17 @@ func NewUserService() *UserService {
 
 // CheckUser validates user credentials
 func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
+	log.Printf("=== CheckUser DEBUG START ===")
+	log.Printf("Input email: %s", email)
+	log.Printf("Input userpin: %s", userpin)
+
 	// First encrypt the email to search in database
 	encryptedEmail, err := s.encryptService.GetEncryptData(email)
 	if err != nil {
-		log.Printf("Error encrypting email for search: %v", err)
+		log.Printf("ERROR: Error encrypting email for search: %v", err)
 		return nil, errors.New("invalid credentials")
 	}
+	log.Printf("Encrypted email for search: %s", encryptedEmail)
 
 	query := `
 		SELECT id, email, cnumber, userpin, username, gender, age, height, weight, 
@@ -41,6 +46,8 @@ func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
 		FROM users_master 
 		WHERE email = ? AND ustatus = 0
 	`
+	log.Printf("Executing query: %s", query)
+	log.Printf("Query parameter (encrypted email): %s", encryptedEmail)
 
 	var user models.User
 	var cnumber sql.NullString
@@ -54,23 +61,43 @@ func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
+			log.Printf("ERROR: No rows found for encrypted email: %s", encryptedEmail)
+			log.Printf("This means either:")
+			log.Printf("1. User doesn't exist with this email")
+			log.Printf("2. User exists but with different encrypted email")
+			log.Printf("3. User exists but ustatus != 0")
 			return nil, errors.New("invalid credentials")
 		}
+		log.Printf("ERROR: Database query error: %v", err)
 		return nil, err
+	}
+
+	log.Printf("SUCCESS: User found in database")
+	log.Printf("User ID: %d", user.ID)
+	log.Printf("Stored encrypted email: %s", encryptedStoredEmail)
+	log.Printf("Stored encrypted userpin: %s", encryptedStoredUserpin)
+	log.Printf("Username: %s", user.Username)
+	log.Printf("CNumber valid: %t", cnumber.Valid)
+	if cnumber.Valid {
+		log.Printf("Stored encrypted cnumber: %s", cnumber.String)
 	}
 
 	// Decrypt stored values for validation
 	decryptedEmail, err := s.encryptService.GetDecryptData(encryptedStoredEmail)
 	if err != nil {
-		log.Printf("Error decrypting stored email: %v", err)
+		log.Printf("ERROR: Error decrypting stored email: %v", err)
+		log.Printf("Stored encrypted email that failed to decrypt: %s", encryptedStoredEmail)
 		return nil, errors.New("invalid credentials")
 	}
+	log.Printf("Decrypted stored email: %s", decryptedEmail)
 
 	decryptedUserpin, err := s.encryptService.GetDecryptData(encryptedStoredUserpin)
 	if err != nil {
-		log.Printf("Error decrypting stored userpin: %v", err)
+		log.Printf("ERROR: Error decrypting stored userpin: %v", err)
+		log.Printf("Stored encrypted userpin that failed to decrypt: %s", encryptedStoredUserpin)
 		return nil, errors.New("invalid credentials")
 	}
+	log.Printf("Decrypted stored userpin: %s", decryptedUserpin)
 
 	// Set decrypted values in user object
 	user.Email = decryptedEmail
@@ -81,13 +108,15 @@ func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
 		// Decrypt cnumber if it exists
 		decryptedCNumber, err := s.encryptService.GetDecryptData(cnumber.String)
 		if err != nil {
-			log.Printf("Error decrypting stored cnumber: %v", err)
+			log.Printf("WARNING: Error decrypting stored cnumber: %v", err)
 			user.CNumber = nil
 		} else {
 			user.CNumber = &decryptedCNumber
+			log.Printf("Decrypted cnumber: %s", decryptedCNumber)
 		}
 	} else {
 		user.CNumber = nil
+		log.Printf("CNumber is null/empty")
 	}
 
 	// Parse creation datetime
@@ -99,10 +128,20 @@ func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
 	}
 
 	// Validate credentials
+	log.Printf("=== CREDENTIAL VALIDATION ===")
+	log.Printf("Comparing decrypted email: '%s' with input email: '%s'", decryptedEmail, email)
+	log.Printf("Email match: %t", decryptedEmail == email)
+	log.Printf("Comparing decrypted userpin: '%s' with input userpin: '%s'", decryptedUserpin, userpin)
+	log.Printf("Userpin match: %t", decryptedUserpin == userpin)
+
 	if decryptedEmail != email || decryptedUserpin != userpin {
+		log.Printf("ERROR: Credential validation failed")
+		log.Printf("Email match: %t, Userpin match: %t", decryptedEmail == email, decryptedUserpin == userpin)
 		return nil, errors.New("invalid credentials")
 	}
 
+	log.Printf("SUCCESS: Credentials validated successfully")
+	log.Printf("=== CheckUser DEBUG END ===")
 	return &user, nil
 }
 
