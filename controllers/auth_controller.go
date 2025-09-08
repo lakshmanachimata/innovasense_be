@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"innovasense_be/models"
 	"innovasense_be/services"
 	"net/http"
@@ -18,19 +19,25 @@ func NewAuthController() *AuthController {
 	}
 }
 
+// EncryptedLoginRequest represents the encrypted login request
+type EncryptedLoginRequest struct {
+	Email   string `json:"email"`
+	Userpin string `json:"userpin"`
+}
+
 // InnovoLogin handles user login
 // @Summary User login
 // @Description Authenticate a user with email and password. Returns JWT token valid for 30 days.
 // @Tags Authentication
 // @Accept json
 // @Produce json
-// @Param request body models.LoginRequest true "Login credentials"
+// @Param request body EncryptedLoginRequest true "Login credentials"
 // @Success 200 {object} models.APIResponse{data=models.APIResponse,jwt_token=string} "Login successful with JWT token"
 // @Failure 400 {object} models.APIResponse
 // @Router /Services/innovologin [post]
 func (c *AuthController) InnovoLogin(ctx *gin.Context) {
-	var req models.LoginRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	var encryptedReq EncryptedLoginRequest
+	if err := ctx.ShouldBindJSON(&encryptedReq); err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
 			Message: "Invalid request data",
@@ -38,7 +45,29 @@ func (c *AuthController) InnovoLogin(ctx *gin.Context) {
 		return
 	}
 
-	user, err := c.userService.CheckUser(req.Email, req.Userpin)
+	// Initialize encryption service
+	encryptService := services.NewEncryptDecryptService()
+
+	// Decrypt the encrypted fields
+	decryptedEmail, err := encryptService.GetDecryptData(encryptedReq.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email: " + err.Error(),
+		})
+		return
+	}
+
+	decryptedUserpin, err := encryptService.GetDecryptData(encryptedReq.Userpin)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt userpin: " + err.Error(),
+		})
+		return
+	}
+
+	user, err := c.userService.CheckUser(decryptedEmail, decryptedUserpin)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
@@ -79,24 +108,96 @@ func (c *AuthController) InnovoLogin(ctx *gin.Context) {
 	})
 }
 
+// EncryptedRegisterRequest represents the encrypted registration request
+type EncryptedRegisterRequest struct {
+	Username string  `json:"username"`
+	Email    string  `json:"email"`
+	CNumber  *string `json:"cnumber"`
+	Userpin  string  `json:"userpin"`
+	Age      int     `json:"age"`
+	Gender   string  `json:"gender"`
+	Height   float64 `json:"height"`
+	Weight   float64 `json:"weight"`
+}
+
 // InnovoRegister handles user registration
 // @Summary User registration
 // @Description Register a new user
 // @Tags Authentication
 // @Accept json
 // @Produce json
-// @Param request body models.RegisterRequest true "Registration data"
+// @Param request body EncryptedRegisterRequest true "Registration data"
 // @Success 200 {object} models.APIResponse
 // @Failure 400 {object} models.APIResponse
 // @Router /Services/innovoregister [post]
 func (c *AuthController) InnovoRegister(ctx *gin.Context) {
-	var req models.RegisterRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	var encryptedReq EncryptedRegisterRequest
+	if err := ctx.ShouldBindJSON(&encryptedReq); err != nil {
+		fmt.Printf("DEBUG: JSON binding error: %v\n", err)
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Invalid request data",
+			Message: "Invalid request data: " + err.Error(),
 		})
 		return
+	}
+
+	fmt.Printf("DEBUG: Received encrypted request: %+v\n", encryptedReq)
+
+	// Initialize encryption service
+	encryptService := services.NewEncryptDecryptService()
+
+	// Decrypt the encrypted fields
+	decryptedEmail, err := encryptService.GetDecryptData(encryptedReq.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email: " + err.Error(),
+		})
+		return
+	}
+
+	decryptedUsername, err := encryptService.GetDecryptData(encryptedReq.Username)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt username: " + err.Error(),
+		})
+		return
+	}
+
+	decryptedUserpin, err := encryptService.GetDecryptData(encryptedReq.Userpin)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt userpin: " + err.Error(),
+		})
+		return
+	}
+
+	// Decrypt contact number if it exists
+	var decryptedCNumber *string
+	if encryptedReq.CNumber != nil {
+		decrypted, err := encryptService.GetDecryptData(*encryptedReq.CNumber)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, models.APIResponse{
+				Code:    1,
+				Message: "Failed to decrypt contact number: " + err.Error(),
+			})
+			return
+		}
+		decryptedCNumber = &decrypted
+	}
+
+	// Create the decrypted request
+	req := models.RegisterRequest{
+		Username: decryptedUsername,
+		Email:    decryptedEmail,
+		CNumber:  decryptedCNumber,
+		Userpin:  decryptedUserpin,
+		Age:      encryptedReq.Age,
+		Gender:   encryptedReq.Gender,
+		Height:   encryptedReq.Height,
+		Weight:   encryptedReq.Weight,
 	}
 
 	// Check if user already exists
