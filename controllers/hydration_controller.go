@@ -59,8 +59,18 @@ func (c *HydrationController) InnovoHydration(ctx *gin.Context) {
 	log.Printf("Received request: %+v", req)
 	log.Printf("JWT Claims - Email: %s, Username: %s", claims.Email, claims.UserName)
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -68,6 +78,7 @@ func (c *HydrationController) InnovoHydration(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
@@ -153,8 +164,18 @@ func (c *HydrationController) NewInnovoHydration(ctx *gin.Context) {
 	log.Printf("Received request: %+v", req)
 	log.Printf("JWT Claims - Email: %s, Username: %s", claims.Email, claims.UserName)
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -162,6 +183,7 @@ func (c *HydrationController) NewInnovoHydration(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
@@ -234,8 +256,18 @@ func (c *HydrationController) UpdateHydrationValue(ctx *gin.Context) {
 		return
 	}
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -243,6 +275,7 @@ func (c *HydrationController) UpdateHydrationValue(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
@@ -314,8 +347,18 @@ func (c *HydrationController) UpdateSweatData(ctx *gin.Context) {
 		return
 	}
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -323,6 +366,7 @@ func (c *HydrationController) UpdateSweatData(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
@@ -392,8 +436,18 @@ func (c *HydrationController) GetSummary(ctx *gin.Context) {
 		return
 	}
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -401,6 +455,7 @@ func (c *HydrationController) GetSummary(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
@@ -457,8 +512,18 @@ func (c *HydrationController) GetUserDetailedSummary(ctx *gin.Context) {
 		return
 	}
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -466,6 +531,7 @@ func (c *HydrationController) GetUserDetailedSummary(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
@@ -525,8 +591,18 @@ func (c *HydrationController) GetHydrationSummaryScreen(ctx *gin.Context) {
 		return
 	}
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -534,6 +610,7 @@ func (c *HydrationController) GetHydrationSummaryScreen(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
@@ -591,8 +668,18 @@ func (c *HydrationController) GetClientHistory(ctx *gin.Context) {
 		return
 	}
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -600,6 +687,7 @@ func (c *HydrationController) GetClientHistory(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
@@ -667,8 +755,18 @@ func (c *HydrationController) GetHydrationHistory(ctx *gin.Context) {
 		return
 	}
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -676,6 +774,7 @@ func (c *HydrationController) GetHydrationHistory(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
@@ -746,8 +845,18 @@ func (c *HydrationController) GetElectrolyteHistory(ctx *gin.Context) {
 		return
 	}
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -755,6 +864,7 @@ func (c *HydrationController) GetElectrolyteHistory(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
