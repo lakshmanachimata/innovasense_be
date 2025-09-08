@@ -549,10 +549,17 @@ func (s *UserService) GlobalUpdate(tableName string, data map[string]interface{}
 
 // GetUserIDByEmail gets user ID by Email
 func (s *UserService) GetUserIDByEmail(email string) (int, error) {
+	// Encrypt the email to search in database
+	encryptedEmail, err := s.encryptService.GetEncryptData(email)
+	if err != nil {
+		log.Printf("Error encrypting email for GetUserIDByEmail: %v", err)
+		return 0, err
+	}
+
 	query := `SELECT id FROM users_master WHERE email = ? AND ustatus = 0`
 
 	var userID int
-	err := s.db.QueryRow(query, email).Scan(&userID)
+	err = s.db.QueryRow(query, encryptedEmail).Scan(&userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return 0, errors.New("user not found")
