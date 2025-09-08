@@ -52,7 +52,7 @@ func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
 	var user models.User
 	var cnumber sql.NullString
 	var encryptedStoredEmail, encryptedStoredUserpin string
-	var creationDatetimeStr string
+	var creationDatetimeStr sql.NullString
 	err = s.db.QueryRow(query, encryptedEmail).Scan(
 		&user.ID, &encryptedStoredEmail, &cnumber, &encryptedStoredUserpin, &user.Username, &user.Gender,
 		&user.Age, &user.Height, &user.Weight, &user.RoleID, &user.UStatus,
@@ -120,8 +120,8 @@ func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
 	}
 
 	// Parse creation datetime
-	if creationDatetimeStr != "" {
-		parsedTime, err := time.Parse("2006-01-02 15:04:05", creationDatetimeStr)
+	if creationDatetimeStr.Valid && creationDatetimeStr.String != "" {
+		parsedTime, err := time.Parse("2006-01-02 15:04:05", creationDatetimeStr.String)
 		if err == nil {
 			user.CreationDatetime = parsedTime
 		}
