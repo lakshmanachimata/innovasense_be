@@ -116,8 +116,18 @@ func (c *CommonController) GetSweatImages(ctx *gin.Context) {
 		return
 	}
 
-	// Validate email and username from request body against JWT claims
-	if req.Email != claims.Email {
+	// Decrypt the email from request body to compare with JWT claims
+	decryptedEmail, err := c.userService.GetEncryptDecryptService().GetDecryptData(req.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, models.APIResponse{
+			Code:    1,
+			Message: "Failed to decrypt email",
+		})
+		return
+	}
+
+	// Validate decrypted email against JWT claims
+	if decryptedEmail != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
 			Message: "email in request body does not match authenticated user",
@@ -125,6 +135,7 @@ func (c *CommonController) GetSweatImages(ctx *gin.Context) {
 		return
 	}
 
+	// Username is not encrypted, validate directly
 	if req.Username != claims.UserName {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,

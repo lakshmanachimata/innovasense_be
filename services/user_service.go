@@ -562,3 +562,8 @@ func (s *UserService) GetUserIDByEmail(email string) (int, error) {
 
 	return userID, nil
 }
+
+// GetEncryptDecryptService returns the encrypt/decrypt service instance
+func (s *UserService) GetEncryptDecryptService() *EncryptDecryptService {
+	return s.encryptService
+}
