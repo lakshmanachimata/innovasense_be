@@ -216,8 +216,7 @@ test_api "POST" "/Services/protected/getElectrolyteHistory" '{
 # Test 22: Get Sweat Images
 test_api "POST" "/Services/protected/getSweatImages" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "Final Test User 1",
-    "userid": 9
+    "username": "Final Test User 1"
 }' "Authorization: Bearer $JWT_TOKEN" "Get Sweat Images"
 
 # Test 23: Protected Route (Without JWT Token)
