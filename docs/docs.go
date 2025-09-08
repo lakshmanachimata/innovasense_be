@@ -284,7 +284,7 @@ const docTemplate = `{
         },
         "/Services/innovologin": {
             "post": {
-                "description": "Authenticate a user with contact number and password. Returns JWT token valid for 30 days.",
+                "description": "Authenticate a user with email and password. Returns JWT token valid for 30 days.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1035,11 +1035,11 @@ const docTemplate = `{
         "models.ClientHistoryRequest": {
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "username"
             ],
             "properties": {
-                "cnumber": {
+                "email": {
                     "type": "string"
                 },
                 "username": {
@@ -1050,12 +1050,12 @@ const docTemplate = `{
         "models.DetailedSummaryRequest": {
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "id",
                 "username"
             ],
             "properties": {
-                "cnumber": {
+                "email": {
                     "type": "string"
                 },
                 "id": {
@@ -1092,11 +1092,11 @@ const docTemplate = `{
         "models.GetSweatImagesRequest": {
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "username"
             ],
             "properties": {
-                "cnumber": {
+                "email": {
                     "type": "string"
                 },
                 "username": {
@@ -1127,14 +1127,14 @@ const docTemplate = `{
         "models.HistoryRequest": {
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "from_date",
                 "to_date",
                 "userid",
                 "username"
             ],
             "properties": {
-                "cnumber": {
+                "email": {
                     "type": "string"
                 },
                 "from_date": {
@@ -1241,8 +1241,8 @@ const docTemplate = `{
         "models.HydrationRequest": {
             "type": "object",
             "required": [
-                "cnumber",
                 "device_type",
+                "email",
                 "height",
                 "sweat_position",
                 "time_taken",
@@ -1251,11 +1251,11 @@ const docTemplate = `{
                 "weight"
             ],
             "properties": {
-                "cnumber": {
-                    "type": "string"
-                },
                 "device_type": {
                     "type": "integer"
+                },
+                "email": {
+                    "type": "string"
                 },
                 "height": {
                     "type": "number"
@@ -1359,12 +1359,12 @@ const docTemplate = `{
         "models.HydrationSummaryRequest": {
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "id",
                 "username"
             ],
             "properties": {
-                "cnumber": {
+                "email": {
                     "type": "string"
                 },
                 "id": {
@@ -1393,14 +1393,14 @@ const docTemplate = `{
             "description": "Login request data structure",
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "userpin"
             ],
             "properties": {
-                "cnumber": {
-                    "description": "@Description User's contact number (required)",
+                "email": {
+                    "description": "@Description User's email address (required)",
                     "type": "string",
-                    "example": "1234567890"
+                    "example": "user@example.com"
                 },
                 "userpin": {
                     "description": "@Description User's PIN/password (required)",
@@ -1413,7 +1413,7 @@ const docTemplate = `{
             "description": "User registration request data structure",
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "username",
                 "userpin"
             ],
@@ -1424,9 +1424,14 @@ const docTemplate = `{
                     "example": 25
                 },
                 "cnumber": {
-                    "description": "@Description User's contact number (required)",
+                    "description": "@Description User's contact number (optional)",
                     "type": "string",
                     "example": "1234567890"
+                },
+                "email": {
+                    "description": "@Description User's email address (required)",
+                    "type": "string",
+                    "example": "user@example.com"
                 },
                 "gender": {
                     "description": "@Description User's gender",
@@ -1458,12 +1463,12 @@ const docTemplate = `{
         "models.SummaryRequest": {
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "sweat_position",
                 "username"
             ],
             "properties": {
-                "cnumber": {
+                "email": {
                     "type": "string"
                 },
                 "sweat_position": {
@@ -1587,7 +1592,7 @@ const docTemplate = `{
         "models.UpdateHydrationRequest": {
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "id",
                 "username"
             ],
@@ -1595,11 +1600,11 @@ const docTemplate = `{
                 "bmi": {
                     "type": "number"
                 },
-                "cnumber": {
-                    "type": "string"
-                },
                 "device_type": {
                     "type": "integer"
+                },
+                "email": {
+                    "type": "string"
                 },
                 "height": {
                     "type": "number"
@@ -1633,14 +1638,14 @@ const docTemplate = `{
         "models.UpdateImagePathRequest": {
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "image_id",
                 "image_path",
                 "userid",
                 "username"
             ],
             "properties": {
-                "cnumber": {
+                "email": {
                     "type": "string"
                 },
                 "image_id": {
@@ -1660,7 +1665,7 @@ const docTemplate = `{
         "models.UpdateSweatDataRequest": {
             "type": "object",
             "required": [
-                "cnumber",
+                "email",
                 "image_id",
                 "sweat_loss",
                 "sweat_rate",
@@ -1668,7 +1673,7 @@ const docTemplate = `{
                 "username"
             ],
             "properties": {
-                "cnumber": {
+                "email": {
                     "type": "string"
                 },
                 "image_id": {

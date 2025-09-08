@@ -34,24 +34,24 @@ definitions:
     type: object
   models.ClientHistoryRequest:
     properties:
-      cnumber:
+      email:
         type: string
       username:
         type: string
     required:
-    - cnumber
+    - email
     - username
     type: object
   models.DetailedSummaryRequest:
     properties:
-      cnumber:
+      email:
         type: string
       id:
         type: integer
       username:
         type: string
     required:
-    - cnumber
+    - email
     - id
     - username
     type: object
@@ -72,12 +72,12 @@ definitions:
     type: object
   models.GetSweatImagesRequest:
     properties:
-      cnumber:
+      email:
         type: string
       username:
         type: string
     required:
-    - cnumber
+    - email
     - username
     type: object
   models.HistoricalDataRequest:
@@ -96,7 +96,7 @@ definitions:
     type: object
   models.HistoryRequest:
     properties:
-      cnumber:
+      email:
         type: string
       from_date:
         type: string
@@ -107,7 +107,7 @@ definitions:
       username:
         type: string
     required:
-    - cnumber
+    - email
     - from_date
     - to_date
     - userid
@@ -175,10 +175,10 @@ definitions:
     type: object
   models.HydrationRequest:
     properties:
-      cnumber:
-        type: string
       device_type:
         type: integer
+      email:
+        type: string
       height:
         type: number
       image_id:
@@ -196,8 +196,8 @@ definitions:
       weight:
         type: number
     required:
-    - cnumber
     - device_type
+    - email
     - height
     - sweat_position
     - time_taken
@@ -256,14 +256,14 @@ definitions:
     type: object
   models.HydrationSummaryRequest:
     properties:
-      cnumber:
+      email:
         type: string
       id:
         type: integer
       username:
         type: string
     required:
-    - cnumber
+    - email
     - id
     - username
     type: object
@@ -279,16 +279,16 @@ definitions:
   models.LoginRequest:
     description: Login request data structure
     properties:
-      cnumber:
-        description: '@Description User''s contact number (required)'
-        example: "1234567890"
+      email:
+        description: '@Description User''s email address (required)'
+        example: user@example.com
         type: string
       userpin:
         description: '@Description User''s PIN/password (required)'
         example: test@123
         type: string
     required:
-    - cnumber
+    - email
     - userpin
     type: object
   models.RegisterRequest:
@@ -299,8 +299,12 @@ definitions:
         example: 25
         type: integer
       cnumber:
-        description: '@Description User''s contact number (required)'
+        description: '@Description User''s contact number (optional)'
         example: "1234567890"
+        type: string
+      email:
+        description: '@Description User''s email address (required)'
+        example: user@example.com
         type: string
       gender:
         description: '@Description User''s gender'
@@ -323,20 +327,20 @@ definitions:
         example: 70
         type: number
     required:
-    - cnumber
+    - email
     - username
     - userpin
     type: object
   models.SummaryRequest:
     properties:
-      cnumber:
+      email:
         type: string
       sweat_position:
         type: number
       username:
         type: string
     required:
-    - cnumber
+    - email
     - sweat_position
     - username
     type: object
@@ -416,10 +420,10 @@ definitions:
     properties:
       bmi:
         type: number
-      cnumber:
-        type: string
       device_type:
         type: integer
+      email:
+        type: string
       height:
         type: number
       id:
@@ -439,13 +443,13 @@ definitions:
       weight:
         type: number
     required:
-    - cnumber
+    - email
     - id
     - username
     type: object
   models.UpdateImagePathRequest:
     properties:
-      cnumber:
+      email:
         type: string
       image_id:
         type: integer
@@ -456,7 +460,7 @@ definitions:
       username:
         type: string
     required:
-    - cnumber
+    - email
     - image_id
     - image_path
     - userid
@@ -464,7 +468,7 @@ definitions:
     type: object
   models.UpdateSweatDataRequest:
     properties:
-      cnumber:
+      email:
         type: string
       image_id:
         type: integer
@@ -477,7 +481,7 @@ definitions:
       username:
         type: string
     required:
-    - cnumber
+    - email
     - image_id
     - sweat_loss
     - sweat_rate
@@ -674,8 +678,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Authenticate a user with contact number and password. Returns JWT
-        token valid for 30 days.
+      description: Authenticate a user with email and password. Returns JWT token
+        valid for 30 days.
       parameters:
       - description: Login credentials
         in: body

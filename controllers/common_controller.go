@@ -116,11 +116,11 @@ func (c *CommonController) GetSweatImages(ctx *gin.Context) {
 		return
 	}
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -209,15 +209,15 @@ func (c *CommonController) UploadInnovoImage(ctx *gin.Context) {
 		return
 	}
 
-	// Extract cnumber and username from JWT claims for validation
-	cnumber := claims.CNumber
+	// Extract email and username from JWT claims for validation
+	email := claims.Email
 	username := claims.UserName
 
 	// Validate that we have the required user information
-	if cnumber == "" || username == "" {
+	if email == "" || username == "" {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Invalid JWT claims: missing cnumber or username",
+			Message: "Invalid JWT claims: missing email or username",
 		})
 		return
 	}
@@ -321,11 +321,11 @@ func (c *CommonController) UpdateInnovoImagePath(ctx *gin.Context) {
 		return
 	}
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}

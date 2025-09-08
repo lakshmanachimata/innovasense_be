@@ -20,7 +20,7 @@ func NewAuthController() *AuthController {
 
 // InnovoLogin handles user login
 // @Summary User login
-// @Description Authenticate a user with contact number and password. Returns JWT token valid for 30 days.
+// @Description Authenticate a user with email and password. Returns JWT token valid for 30 days.
 // @Tags Authentication
 // @Accept json
 // @Produce json
@@ -38,7 +38,7 @@ func (c *AuthController) InnovoLogin(ctx *gin.Context) {
 		return
 	}
 
-	user, err := c.userService.CheckUser(req.CNumber, req.Userpin)
+	user, err := c.userService.CheckUser(req.Email, req.Userpin)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
@@ -58,9 +58,9 @@ func (c *AuthController) InnovoLogin(ctx *gin.Context) {
 		return
 	}
 
-	// Generate JWT token using CNumber and UserName
+	// Generate JWT token using Email and UserName
 	jwtService := services.NewJWTService()
-	token, err := jwtService.GenerateToken(user.CNumber, user.Username)
+	token, err := jwtService.GenerateToken(user.Email, user.Username)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
@@ -100,11 +100,11 @@ func (c *AuthController) InnovoRegister(ctx *gin.Context) {
 	}
 
 	// Check if user already exists
-	existingUser, _ := c.userService.ValidateUser(req.CNumber)
+	existingUser, _ := c.userService.ValidateUser(req.Email)
 	if existingUser != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
-			Message:  "User already exists with this contact number",
+			Message:  "User already exists with this email address",
 			Response: 0,
 		})
 		return

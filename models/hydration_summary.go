@@ -62,7 +62,7 @@ type SweatRateSummaryItem struct {
 
 // HydrationSummaryRequest represents the request for getting hydration summary
 type HydrationSummaryRequest struct {
-	CNumber  string `json:"cnumber" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
 	Username string `json:"username" binding:"required"`
 	ID       int    `json:"id" binding:"required"`
 }

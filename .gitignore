@@ -17,7 +17,9 @@
 *.a
 *.o
 *.obj
-
+*.html
+*.txt
+*.log
 # Test binary, built with `go test -c`
 *.test
 

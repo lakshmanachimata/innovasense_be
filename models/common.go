@@ -44,14 +44,14 @@ type SweatRateSummary struct {
 
 // ImageUploadRequest represents image upload request
 type ImageUploadRequest struct {
-	CNumber  string `json:"cnumber" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
 	Username string `json:"username" binding:"required"`
 	// Note: ImagePath will be generated on the server after file upload
 }
 
 // UpdateImagePathRequest represents image path update request
 type UpdateImagePathRequest struct {
-	CNumber   string `json:"cnumber" binding:"required"`
+	Email     string `json:"email" binding:"required,email"`
 	Username  string `json:"username" binding:"required"`
 	UserID    int    `json:"userid" binding:"required"`
 	ImageID   int    `json:"image_id" binding:"required"`
@@ -60,6 +60,6 @@ type UpdateImagePathRequest struct {
 
 // GetSweatImagesRequest represents sweat images retrieval request
 type GetSweatImagesRequest struct {
-	CNumber  string `json:"cnumber" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
 	Username string `json:"username" binding:"required"`
 }

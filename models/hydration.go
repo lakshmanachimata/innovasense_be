@@ -57,7 +57,7 @@ type SweatSummary struct {
 
 // HydrationRequest represents hydration data submission request
 type HydrationRequest struct {
-	CNumber       string  `json:"cnumber" binding:"required"`
+	Email         string  `json:"email" binding:"required,email"`
 	Username      string  `json:"username" binding:"required"`
 	UserID        int     `json:"userid" binding:"required"`
 	Weight        float64 `json:"weight" binding:"required"`
@@ -71,7 +71,7 @@ type HydrationRequest struct {
 
 // UpdateHydrationRequest represents hydration data update request
 type UpdateHydrationRequest struct {
-	CNumber       string  `json:"cnumber" binding:"required"`
+	Email         string  `json:"email" binding:"required,email"`
 	Username      string  `json:"username" binding:"required"`
 	ID            int     `json:"id" binding:"required"`
 	Weight        float64 `json:"weight"`
@@ -97,7 +97,7 @@ type SweatData struct {
 
 // UpdateSweatDataRequest represents sweat data update request
 type UpdateSweatDataRequest struct {
-	CNumber   string  `json:"cnumber" binding:"required"`
+	Email     string  `json:"email" binding:"required,email"`
 	Username  string  `json:"username" binding:"required"`
 	UserID    int     `json:"userid" binding:"required"`
 	ImageID   int     `json:"image_id" binding:"required"`
@@ -107,7 +107,7 @@ type UpdateSweatDataRequest struct {
 
 // HistoryRequest represents history data request
 type HistoryRequest struct {
-	CNumber  string `json:"cnumber" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
 	Username string `json:"username" binding:"required"`
 	UserID   int    `json:"userid" binding:"required"`
 	FromDate string `json:"from_date" binding:"required"`
@@ -116,21 +116,21 @@ type HistoryRequest struct {
 
 // SummaryRequest represents summary data request
 type SummaryRequest struct {
-	CNumber       string  `json:"cnumber" binding:"required"`
+	Email         string  `json:"email" binding:"required,email"`
 	Username      string  `json:"username" binding:"required"`
 	SweatPosition float64 `json:"sweat_position" binding:"required"`
 }
 
 // DetailedSummaryRequest represents detailed summary request
 type DetailedSummaryRequest struct {
-	CNumber  string `json:"cnumber" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
 	Username string `json:"username" binding:"required"`
 	ID       int    `json:"id" binding:"required"`
 }
 
 // ClientHistoryRequest represents client history request
 type ClientHistoryRequest struct {
-	CNumber  string `json:"cnumber" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
 	Username string `json:"username" binding:"required"`
 }
 
@@ -173,8 +173,8 @@ type OrgUser struct {
 // HistoricalDataRequest represents the request for historical data
 type HistoricalDataRequest struct {
 	Contact  string `json:"contact" binding:"required"` // Contact number or email
-	FromDate string `json:"from_date"`                   // Optional from date
-	ToDate   string `json:"to_date"`                     // Optional to date
+	FromDate string `json:"from_date"`                  // Optional from date
+	ToDate   string `json:"to_date"`                    // Optional to date
 }
 
 // HistoricalDataResponse represents the historical data response

@@ -9,8 +9,10 @@ import (
 type User struct {
 	// @Description Unique user identifier
 	ID int `json:"id" db:"id"`
-	// @Description User's contact number
-	CNumber string `json:"cnumber" db:"cnumber"`
+	// @Description User's email address
+	Email string `json:"email" db:"email"`
+	// @Description User's contact number (optional)
+	CNumber *string `json:"cnumber,omitempty" db:"cnumber"`
 	// @Description User's encrypted PIN/password
 	Userpin string `json:"userpin" db:"userpin"`
 	// @Description User's display name
@@ -34,8 +36,8 @@ type User struct {
 // LoginRequest represents login request data
 // @Description Login request data structure
 type LoginRequest struct {
-	// @Description User's contact number (required)
-	CNumber string `json:"cnumber" binding:"required" example:"1234567890"`
+	// @Description User's email address (required)
+	Email string `json:"email" binding:"required,email" example:"user@example.com"`
 	// @Description User's PIN/password (required)
 	Userpin string `json:"userpin" binding:"required" example:"test@123"`
 }
@@ -43,8 +45,10 @@ type LoginRequest struct {
 // RegisterRequest represents user registration request
 // @Description User registration request data structure
 type RegisterRequest struct {
-	// @Description User's contact number (required)
-	CNumber string `json:"cnumber" binding:"required" example:"1234567890"`
+	// @Description User's email address (required)
+	Email string `json:"email" binding:"required,email" example:"user@example.com"`
+	// @Description User's contact number (optional)
+	CNumber *string `json:"cnumber,omitempty" example:"1234567890"`
 	// @Description User's PIN/password (required)
 	Userpin string `json:"userpin" binding:"required" example:"test@123"`
 	// @Description User's display name (required)

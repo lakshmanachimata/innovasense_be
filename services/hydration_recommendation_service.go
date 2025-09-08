@@ -72,7 +72,7 @@ func (s *HydrationRecommendationService) GetHydrationRecommendation(
 
 	// Step 3: Create hydration request and insert into user_data table
 	hydrationReq := &models.HydrationRequest{
-		CNumber:       req.Contact,
+		Email:         req.Contact,
 		Username:      req.Name,
 		UserID:        userID,
 		Weight:        req.Weight,

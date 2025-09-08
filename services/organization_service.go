@@ -19,9 +19,12 @@ func NewOrganizationService(db *sql.DB) *OrganizationService {
 func (s *OrganizationService) ValidateOrgCredentials(apiKey, secretKey string) (*models.Organization, error) {
 	query := `
 		SELECT id, org_name, org_desc, salt_key, api_key 
-		FROM org_master 
+		FROM organizations 
 		WHERE api_key = ? AND salt_key = ?
 	`
+
+	fmt.Printf("DEBUG: Executing query: %s\n", query)
+	fmt.Printf("DEBUG: With params: apiKey=%s, secretKey=%s\n", apiKey, secretKey)
 
 	var org models.Organization
 	err := s.db.QueryRow(query, apiKey, secretKey).Scan(
@@ -85,6 +88,7 @@ func (s *OrganizationService) RegisterOrgUser(name, contact string, orgID int) (
 		return nil, fmt.Errorf("failed to register user: %v", err)
 	}
 
+	// For MySQL, we can use LastInsertId
 	userID, err := result.LastInsertId()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get last insert ID: %v", err)
@@ -118,18 +122,18 @@ func (s *OrganizationService) GetUserIDByContact(contact string) (int, error) {
 // CreateUserInMaster creates a new user in users_master table
 func (s *OrganizationService) CreateUserInMaster(name, contact, gender string, age int, height, weight float64, orgID int) (int, error) {
 	query := `
-		INSERT INTO users_master (cnumber, username, gender, age, height, weight, ustatus, role_id, org_id) 
-		VALUES (?, ?, ?, ?, ?, ?, 0, 2, ?)
+		INSERT INTO users_master (cnumber, username, gender, age, height, weight, ustatus, role_id) 
+		VALUES (?, ?, ?, ?, ?, ?, 0, 2)
 	`
 
-	result, err := s.db.Exec(query, contact, name, gender, age, height, weight, orgID)
+	result, err := s.db.Exec(query, contact, name, gender, age, height, weight)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create user in master: %v", err)
 	}
 
 	userID, err := result.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("failed to get last insert ID: %v", err)
+		return 0, fmt.Errorf("failed to get user ID: %v", err)
 	}
 
 	return int(userID), nil

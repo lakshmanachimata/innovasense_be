@@ -5,6 +5,7 @@ import (
 	"errors"
 	"innovasense_be/config"
 	"innovasense_be/models"
+	"log"
 	"time"
 )
 
@@ -13,24 +14,30 @@ type UserService struct {
 }
 
 func NewUserService() *UserService {
+	db := config.GetDB()
+	if db == nil {
+		log.Fatal("Database connection is nil")
+	}
+	log.Println("UserService initialized with database connection")
 	return &UserService{
-		db: config.GetDB(),
+		db: db,
 	}
 }
 
 // CheckUser validates user credentials
-func (s *UserService) CheckUser(cnumber, userpin string) (*models.User, error) {
+func (s *UserService) CheckUser(email, userpin string) (*models.User, error) {
 	query := `
-		SELECT id, cnumber, userpin, username, gender, age, height, weight, 
+		SELECT id, email, cnumber, userpin, username, gender, age, height, weight, 
 		       role_id, ustatus, creation_datetime
 		FROM users_master 
-		WHERE cnumber = ? AND ustatus = 0
+		WHERE email = ? AND ustatus = 0
 	`
 
 	var user models.User
+	var cnumber sql.NullString
 	var creationDatetimeStr string
-	err := s.db.QueryRow(query, cnumber).Scan(
-		&user.ID, &user.CNumber, &user.Userpin, &user.Username, &user.Gender,
+	err := s.db.QueryRow(query, email).Scan(
+		&user.ID, &user.Email, &cnumber, &user.Userpin, &user.Username, &user.Gender,
 		&user.Age, &user.Height, &user.Weight, &user.RoleID, &user.UStatus,
 		&creationDatetimeStr,
 	)
@@ -40,6 +47,11 @@ func (s *UserService) CheckUser(cnumber, userpin string) (*models.User, error) {
 			return nil, errors.New("invalid credentials")
 		}
 		return nil, err
+	}
+
+	// Handle nullable contact number
+	if cnumber.Valid {
+		user.CNumber = &cnumber.String
 	}
 
 	// Decrypt the stored userpin and compare with the input
@@ -79,16 +91,17 @@ func (s *UserService) CheckUser(cnumber, userpin string) (*models.User, error) {
 // CheckPIN validates user PIN
 func (s *UserService) CheckPIN(id int, userpin string) (*models.User, error) {
 	query := `
-		SELECT id, cnumber, userpin, username, gender, age, height, weight, 
+		SELECT id, email, cnumber, userpin, username, gender, age, height, weight, 
 		       role_id, ustatus, creation_datetime
 		FROM users_master 
 		WHERE id = ? AND userpin = ?
 	`
 
 	var user models.User
+	var cnumber sql.NullString
 	var creationDatetimeStr string
 	err := s.db.QueryRow(query, id, userpin).Scan(
-		&user.ID, &user.CNumber, &user.Userpin, &user.Username, &user.Gender,
+		&user.ID, &user.Email, &cnumber, &user.Userpin, &user.Username, &user.Gender,
 		&user.Age, &user.Height, &user.Weight, &user.RoleID, &user.UStatus,
 		&creationDatetimeStr,
 	)
@@ -98,6 +111,11 @@ func (s *UserService) CheckPIN(id int, userpin string) (*models.User, error) {
 			return nil, errors.New("invalid PIN")
 		}
 		return nil, err
+	}
+
+	// Handle nullable contact number
+	if cnumber.Valid {
+		user.CNumber = &cnumber.String
 	}
 
 	// Parse the creation_datetime string to time.Time
@@ -121,18 +139,19 @@ func (s *UserService) CheckPIN(id int, userpin string) (*models.User, error) {
 }
 
 // ValidateUser checks if user exists and is active
-func (s *UserService) ValidateUser(cnumber string) (*models.User, error) {
+func (s *UserService) ValidateUser(email string) (*models.User, error) {
 	query := `
-		SELECT id, cnumber, userpin, username, gender, age, height, weight, 
+		SELECT id, email, cnumber, userpin, username, gender, age, height, weight, 
 		       role_id, ustatus, creation_datetime
 		FROM users_master 
-		WHERE cnumber = ? AND ustatus = 0
+		WHERE email = ? AND ustatus = 0
 	`
 
 	var user models.User
+	var cnumber sql.NullString
 	var creationDatetimeStr string
-	err := s.db.QueryRow(query, cnumber).Scan(
-		&user.ID, &user.CNumber, &user.Userpin, &user.Username, &user.Gender,
+	err := s.db.QueryRow(query, email).Scan(
+		&user.ID, &user.Email, &cnumber, &user.Userpin, &user.Username, &user.Gender,
 		&user.Age, &user.Height, &user.Weight, &user.RoleID, &user.UStatus,
 		&creationDatetimeStr,
 	)
@@ -142,6 +161,11 @@ func (s *UserService) ValidateUser(cnumber string) (*models.User, error) {
 			return nil, errors.New("user not found")
 		}
 		return nil, err
+	}
+
+	// Handle nullable contact number
+	if cnumber.Valid {
+		user.CNumber = &cnumber.String
 	}
 
 	// Parse the creation_datetime string to time.Time
@@ -169,23 +193,26 @@ func (s *UserService) ValidateUser(cnumber string) (*models.User, error) {
 // RegisterUser creates a new user
 func (s *UserService) RegisterUser(req *models.RegisterRequest) (int, error) {
 	query := `
-		INSERT INTO users_master (cnumber, userpin, username, gender, age, 
-		                         height, weight, creation_datetime, ustatus, role_id)
+		INSERT INTO users_master (email, cnumber, userpin, username, gender, age, 
+		                         height, weight, ustatus, role_id)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 2)
 	`
 
-	now := time.Now()
-	result, err := s.db.Exec(query, req.CNumber, req.Userpin, req.Username,
-		req.Gender, req.Age, req.Height, req.Weight, now)
+	log.Printf("Registering user: %+v", req)
+	result, err := s.db.Exec(query, req.Email, req.CNumber, req.Userpin, req.Username,
+		req.Gender, req.Age, req.Height, req.Weight)
 	if err != nil {
+		log.Printf("Database error during registration: %v", err)
 		return 0, err
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
+		log.Printf("Error getting last insert ID: %v", err)
 		return 0, err
 	}
 
+	log.Printf("User registered successfully with ID: %d", id)
 	return int(id), nil
 }
 
@@ -406,12 +433,12 @@ func (s *UserService) GlobalUpdate(tableName string, data map[string]interface{}
 	return id, nil
 }
 
-// GetUserIDByCNumber gets user ID by CNumber
-func (s *UserService) GetUserIDByCNumber(cnumber string) (int, error) {
-	query := `SELECT id FROM users_master WHERE cnumber = ? AND ustatus = 0`
+// GetUserIDByEmail gets user ID by Email
+func (s *UserService) GetUserIDByEmail(email string) (int, error) {
+	query := `SELECT id FROM users_master WHERE email = ? AND ustatus = 0`
 
 	var userID int
-	err := s.db.QueryRow(query, cnumber).Scan(&userID)
+	err := s.db.QueryRow(query, email).Scan(&userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return 0, errors.New("user not found")

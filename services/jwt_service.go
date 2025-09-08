@@ -26,18 +26,18 @@ func NewJWTService() *JWTService {
 
 // Claims represents the JWT claims structure
 type Claims struct {
-	CNumber  string `json:"c_number"`
+	Email    string `json:"email"`
 	UserName string `json:"username"`
 	jwt.RegisteredClaims
 }
 
 // GenerateToken creates a new JWT token with the specified claims
-func (s *JWTService) GenerateToken(cNumber string, userName string) (string, error) {
+func (s *JWTService) GenerateToken(email string, userName string) (string, error) {
 	// Set expiration to 30 days from now
 	expirationTime := time.Now().Add(30 * 24 * time.Hour)
 
 	claims := &Claims{
-		CNumber:  cNumber,
+		Email:    email,
 		UserName: userName,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),

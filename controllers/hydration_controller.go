@@ -57,13 +57,13 @@ func (c *HydrationController) InnovoHydration(ctx *gin.Context) {
 
 	// Debug: Log the received request
 	log.Printf("Received request: %+v", req)
-	log.Printf("JWT Claims - CNumber: %s, Username: %s", claims.CNumber, claims.UserName)
+	log.Printf("JWT Claims - Email: %s, Username: %s", claims.Email, claims.UserName)
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -76,8 +76,8 @@ func (c *HydrationController) InnovoHydration(ctx *gin.Context) {
 		return
 	}
 
-	// Get user ID from CNumber
-	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
+	// Get user ID from Email
+	userID, err := c.userService.GetUserIDByEmail(claims.Email)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
@@ -151,13 +151,13 @@ func (c *HydrationController) NewInnovoHydration(ctx *gin.Context) {
 
 	// Debug: Log the received request
 	log.Printf("Received request: %+v", req)
-	log.Printf("JWT Claims - CNumber: %s, Username: %s", claims.CNumber, claims.UserName)
+	log.Printf("JWT Claims - Email: %s, Username: %s", claims.Email, claims.UserName)
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -170,8 +170,8 @@ func (c *HydrationController) NewInnovoHydration(ctx *gin.Context) {
 		return
 	}
 
-	// Get user ID from CNumber
-	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
+	// Get user ID from Email
+	userID, err := c.userService.GetUserIDByEmail(claims.Email)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
@@ -234,11 +234,11 @@ func (c *HydrationController) UpdateHydrationValue(ctx *gin.Context) {
 		return
 	}
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -251,8 +251,8 @@ func (c *HydrationController) UpdateHydrationValue(ctx *gin.Context) {
 		return
 	}
 
-	// Get user ID from CNumber
-	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
+	// Get user ID from Email
+	userID, err := c.userService.GetUserIDByEmail(claims.Email)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
@@ -314,11 +314,11 @@ func (c *HydrationController) UpdateSweatData(ctx *gin.Context) {
 		return
 	}
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -331,8 +331,8 @@ func (c *HydrationController) UpdateSweatData(ctx *gin.Context) {
 		return
 	}
 
-	// Get user ID from CNumber
-	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
+	// Get user ID from Email
+	userID, err := c.userService.GetUserIDByEmail(claims.Email)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
@@ -392,11 +392,11 @@ func (c *HydrationController) GetSummary(ctx *gin.Context) {
 		return
 	}
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -457,11 +457,11 @@ func (c *HydrationController) GetUserDetailedSummary(ctx *gin.Context) {
 		return
 	}
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -525,11 +525,11 @@ func (c *HydrationController) GetHydrationSummaryScreen(ctx *gin.Context) {
 		return
 	}
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -591,11 +591,11 @@ func (c *HydrationController) GetClientHistory(ctx *gin.Context) {
 		return
 	}
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -608,8 +608,8 @@ func (c *HydrationController) GetClientHistory(ctx *gin.Context) {
 		return
 	}
 
-	// Get user ID from CNumber
-	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
+	// Get user ID from Email
+	userID, err := c.userService.GetUserIDByEmail(claims.Email)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
@@ -667,11 +667,11 @@ func (c *HydrationController) GetHydrationHistory(ctx *gin.Context) {
 		return
 	}
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -684,8 +684,8 @@ func (c *HydrationController) GetHydrationHistory(ctx *gin.Context) {
 		return
 	}
 
-	// Get user ID from CNumber
-	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
+	// Get user ID from Email
+	userID, err := c.userService.GetUserIDByEmail(claims.Email)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,
@@ -746,11 +746,11 @@ func (c *HydrationController) GetElectrolyteHistory(ctx *gin.Context) {
 		return
 	}
 
-	// Validate cnumber and username from request body against JWT claims
-	if req.CNumber != claims.CNumber {
+	// Validate email and username from request body against JWT claims
+	if req.Email != claims.Email {
 		ctx.JSON(http.StatusForbidden, models.APIResponse{
 			Code:    1,
-			Message: "cnumber in request body does not match authenticated user",
+			Message: "email in request body does not match authenticated user",
 		})
 		return
 	}
@@ -763,8 +763,8 @@ func (c *HydrationController) GetElectrolyteHistory(ctx *gin.Context) {
 		return
 	}
 
-	// Get user ID from CNumber
-	userID, err := c.userService.GetUserIDByCNumber(claims.CNumber)
+	// Get user ID from Email
+	userID, err := c.userService.GetUserIDByEmail(claims.Email)
 	if err != nil {
 		ctx.JSON(http.StatusOK, models.APIResponse{
 			Code:     1,

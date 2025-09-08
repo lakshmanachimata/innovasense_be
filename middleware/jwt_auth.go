@@ -61,7 +61,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 
 		// Set claims in context for later use
 		c.Set("jwt_claims", claims)
-		c.Set("user_cnumber", claims.CNumber)
+		c.Set("user_email", claims.Email)
 		c.Set("username", claims.UserName)
 
 		// Validate request body cnumber and username against JWT claims
@@ -78,7 +78,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-// validateUserIdentity checks if the request body contains cnumber and username that match JWT claims
+// validateUserIdentity checks if the request body contains email and username that match JWT claims
 func validateUserIdentity(c *gin.Context, claims *services.Claims) error {
 	// Only validate for POST requests with JSON body
 	if c.Request.Method != "POST" {
@@ -102,7 +102,7 @@ func validateUserIdentity(c *gin.Context, claims *services.Claims) error {
 
 	// Try to parse as common request structure
 	var commonRequest struct {
-		CNumber  string `json:"cnumber"`
+		Email    string `json:"email"`
 		Username string `json:"username"`
 	}
 
@@ -112,9 +112,9 @@ func validateUserIdentity(c *gin.Context, claims *services.Claims) error {
 		return nil
 	}
 
-	// Validate cnumber and username against JWT claims
-	if commonRequest.CNumber != "" && commonRequest.CNumber != claims.CNumber {
-		return &ValidationError{Message: "cnumber in request body does not match authenticated user"}
+	// Validate email and username against JWT claims
+	if commonRequest.Email != "" && commonRequest.Email != claims.Email {
+		return &ValidationError{Message: "email in request body does not match authenticated user"}
 	}
 
 	if commonRequest.Username != "" && commonRequest.Username != claims.UserName {
@@ -147,15 +147,15 @@ func GetJWTClaimsFromContext(c *gin.Context) (*services.Claims, bool) {
 	return nil, false
 }
 
-// GetUserCNumberFromJWTContext retrieves user CNumber from JWT context
-func GetUserCNumberFromJWTContext(c *gin.Context) (string, bool) {
-	cNumber, exists := c.Get("user_cnumber")
+// GetUserEmailFromJWTContext retrieves user Email from JWT context
+func GetUserEmailFromJWTContext(c *gin.Context) (string, bool) {
+	email, exists := c.Get("user_email")
 	if !exists {
 		return "", false
 	}
 
-	if cn, ok := cNumber.(string); ok {
-		return cn, true
+	if em, ok := email.(string); ok {
+		return em, true
 	}
 
 	return "", false
