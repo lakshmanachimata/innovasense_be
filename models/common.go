@@ -60,6 +60,6 @@ type UpdateImagePathRequest struct {
 
 // GetSweatImagesRequest represents sweat images retrieval request
 type GetSweatImagesRequest struct {
-	Email    string `json:"email" binding:"required,email"`
+	Email    string `json:"email" binding:"required"`
 	Username string `json:"username" binding:"required"`
 }
