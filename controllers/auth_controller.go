@@ -72,21 +72,21 @@ func (c *AuthController) InnovoLogin(ctx *gin.Context) {
 	// Initialize encryption service
 	encryptService := services.NewEncryptDecryptService()
 
-	// Safely decrypt or use plain text
-	email, err := safeDecrypt(encryptService, encryptedReq.Email)
+	// Decrypt only the fields that should be encrypted (email, userpin)
+	email, err := encryptService.GetDecryptData(encryptedReq.Email)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Failed to process email: " + err.Error(),
+			Message: "Failed to decrypt email: " + err.Error(),
 		})
 		return
 	}
 
-	userpin, err := safeDecrypt(encryptService, encryptedReq.Userpin)
+	userpin, err := encryptService.GetDecryptData(encryptedReq.Userpin)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Failed to process userpin: " + err.Error(),
+			Message: "Failed to decrypt userpin: " + err.Error(),
 		})
 		return
 	}
@@ -170,30 +170,21 @@ func (c *AuthController) InnovoRegister(ctx *gin.Context) {
 	// Initialize encryption service
 	encryptService := services.NewEncryptDecryptService()
 
-	// Safely decrypt or use plain text for all fields
-	email, err := safeDecrypt(encryptService, encryptedReq.Email)
+	// Decrypt only the fields that should be encrypted (email, userpin, cnumber)
+	email, err := encryptService.GetDecryptData(encryptedReq.Email)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Failed to process email: " + err.Error(),
+			Message: "Failed to decrypt email: " + err.Error(),
 		})
 		return
 	}
 
-	username, err := safeDecrypt(encryptService, encryptedReq.Username)
+	userpin, err := encryptService.GetDecryptData(encryptedReq.Userpin)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, models.APIResponse{
 			Code:    1,
-			Message: "Failed to process username: " + err.Error(),
-		})
-		return
-	}
-
-	userpin, err := safeDecrypt(encryptService, encryptedReq.Userpin)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, models.APIResponse{
-			Code:    1,
-			Message: "Failed to process userpin: " + err.Error(),
+			Message: "Failed to decrypt userpin: " + err.Error(),
 		})
 		return
 	}
@@ -201,20 +192,20 @@ func (c *AuthController) InnovoRegister(ctx *gin.Context) {
 	// Process contact number if it exists
 	var cNumber *string
 	if encryptedReq.CNumber != nil {
-		decrypted, err := safeDecrypt(encryptService, *encryptedReq.CNumber)
+		decrypted, err := encryptService.GetDecryptData(*encryptedReq.CNumber)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, models.APIResponse{
 				Code:    1,
-				Message: "Failed to process contact number: " + err.Error(),
+				Message: "Failed to decrypt contact number: " + err.Error(),
 			})
 			return
 		}
 		cNumber = &decrypted
 	}
 
-	// Create the request
+	// Create the request (username stays unencrypted)
 	req := models.RegisterRequest{
-		Username: username,
+		Username: encryptedReq.Username, // Keep username unencrypted
 		Email:    email,
 		CNumber:  cNumber,
 		Userpin:  userpin,

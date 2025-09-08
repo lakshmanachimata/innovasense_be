@@ -27,7 +27,7 @@ test_api() {
     echo "Headers: $headers" | tee -a $RESULTS_FILE
     
     if [ -n "$headers" ]; then
-        response=$(curl -s -w "\nHTTP_CODE:%{http_code}\nTIME:%{time_total}" -X $method "$BASE_URL$endpoint" -H "Content-Type: application/json" $headers -d "$data")
+        response=$(curl -s -w "\nHTTP_CODE:%{http_code}\nTIME:%{time_total}" -X $method "$BASE_URL$endpoint" -H "Content-Type: application/json" -H "$headers" -d "$data")
     else
         response=$(curl -s -w "\nHTTP_CODE:%{http_code}\nTIME:%{time_total}" -X $method "$BASE_URL$endpoint" -H "Content-Type: application/json" -d "$data")
     fi
@@ -51,7 +51,7 @@ test_api "GET" "/" "" "" "Root Endpoint"
 test_api "POST" "/Services/innovoregister" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
     "userpin": "8UkrqMI8cqtn+jndvnjAoA==",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "gender": "Male",
     "age": 25,
     "height": 170.5,
@@ -63,7 +63,7 @@ test_api "POST" "/Services/innovoregister" '{
     "email": "5HfZnB40gzld/98oJ3U4p1HQlwLfY22jxhCzBKoCGsk=",
     "cnumber": "tkB3SU1u0Q2CaV1wpIJzhA==",
     "userpin": "aF2GYlwtO9el+uEUho7sOg==",
-    "username": "0V9IWosPznPKXPCZClpoSRqfeDHeOdHdt0N0YDTRD1Y=",
+    "username": "Final Test User 2",
     "gender": "Female",
     "age": 28,
     "height": 165.0,
@@ -74,7 +74,7 @@ test_api "POST" "/Services/innovoregister" '{
 test_api "POST" "/Services/innovoregister" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
     "userpin": "sh3MNi3dYHfOV6jyEMthog==",
-    "username": "0V9IWosPznPKXPCZClpoSaHcfoa/GooJBeceBRdiXGg=",
+    "username": "Final Test User 3",
     "gender": "Male",
     "age": 30,
     "height": 175.0,
@@ -113,7 +113,7 @@ echo "" | tee -a $RESULTS_FILE
 # Test 12: Basic Hydration Data Submission
 test_api "POST" "/Services/protected/innovoHyderation" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "userid": 9,
     "weight": 70.0,
     "height": 170.5,
@@ -122,12 +122,12 @@ test_api "POST" "/Services/protected/innovoHyderation" '{
     "device_type": 1,
     "image_path": "/test/image1.jpg",
     "image_id": 1
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Basic Hydration Data Submission"
+}' "Authorization: Bearer $JWT_TOKEN" "Basic Hydration Data Submission"
 
 # Test 13: Enhanced Hydration Data Submission
 test_api "POST" "/Services/protected/newinnovoHyderation" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "userid": 9,
     "weight": 70.0,
     "height": 170.5,
@@ -136,12 +136,12 @@ test_api "POST" "/Services/protected/newinnovoHyderation" '{
     "device_type": 2,
     "image_path": "/test/image2.jpg",
     "image_id": 2
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Enhanced Hydration Data Submission"
+}' "Authorization: Bearer $JWT_TOKEN" "Enhanced Hydration Data Submission"
 
 # Test 14: Update Hydration Value
 test_api "POST" "/Services/protected/updateHyderationValue" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "userid": 9,
     "id": 1,
     "weight": 71.0,
@@ -153,86 +153,86 @@ test_api "POST" "/Services/protected/updateHyderationValue" '{
     "sweat_rate": 35.0,
     "sweat_loss": 25.0,
     "device_type": 1
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Update Hydration Value"
+}' "Authorization: Bearer $JWT_TOKEN" "Update Hydration Value"
 
 # Test 15: Update Sweat Data
 test_api "POST" "/Services/protected/updateSweatData" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "userid": 9,
     "image_id": 1,
     "sweat_rate": 40.0,
     "sweat_loss": 30.0
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Update Sweat Data"
+}' "Authorization: Bearer $JWT_TOKEN" "Update Sweat Data"
 
 # Test 16: Get Summary
 test_api "POST" "/Services/protected/getSummary" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "sweat_position": 0.6
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get Summary"
+}' "Authorization: Bearer $JWT_TOKEN" "Get Summary"
 
 # Test 17: Get User Detailed Summary
 test_api "POST" "/Services/protected/getUserDetailedSummary" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "id": 1
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get User Detailed Summary"
+}' "Authorization: Bearer $JWT_TOKEN" "Get User Detailed Summary"
 
 # Test 18: Get Hydration Summary Screen
 test_api "POST" "/Services/protected/getHydrationSummaryScreen" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "id": 1
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get Hydration Summary Screen"
+}' "Authorization: Bearer $JWT_TOKEN" "Get Hydration Summary Screen"
 
 # Test 19: Get Client History
 test_api "POST" "/Services/protected/getClientHistory" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "userid": 9,
     "from_date": "2024-01-01",
     "to_date": "2024-12-31"
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get Client History"
+}' "Authorization: Bearer $JWT_TOKEN" "Get Client History"
 
 # Test 20: Get Hydration History
 test_api "POST" "/Services/protected/getHyderartionHistory" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "userid": 9,
     "from_date": "2024-01-01",
     "to_date": "2024-12-31"
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get Hydration History"
+}' "Authorization: Bearer $JWT_TOKEN" "Get Hydration History"
 
 # Test 21: Get Electrolyte History
 test_api "POST" "/Services/protected/getElectrolyteHistory" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "userid": 9,
     "from_date": "2024-01-01",
     "to_date": "2024-12-31"
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get Electrolyte History"
+}' "Authorization: Bearer $JWT_TOKEN" "Get Electrolyte History"
 
 # Test 22: Get Sweat Images
 test_api "POST" "/Services/protected/getSweatImages" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "userid": 9
-}' "-H \"Authorization: Bearer $JWT_TOKEN\"" "Get Sweat Images"
+}' "Authorization: Bearer $JWT_TOKEN" "Get Sweat Images"
 
 # Test 23: Protected Route (Without JWT Token)
 test_api "POST" "/Services/protected/getSummary" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "sweat_position": 0.6
 }' "" "Protected Route - Without JWT Token (Should Fail)"
 
 # Test 24: Protected Route (With Invalid JWT Token)
 test_api "POST" "/Services/protected/getSummary" '{
     "email": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
-    "username": "0V9IWosPznPKXPCZClpoSVd/G4NQifirRcROg4OuHsc=",
+    "username": "Final Test User 1",
     "sweat_position": 0.6
-}' '-H "Authorization: Bearer invalid.jwt.token"' "Protected Route - With Invalid JWT Token (Should Fail)"
+}' "Authorization: Bearer invalid.jwt.token" "Protected Route - With Invalid JWT Token (Should Fail)"
 
 # Test 25: Organization APIs (These should fail due to PostgreSQL placeholder issue)
 test_api "POST" "/Services/getHydrationRecommendation" '{
@@ -244,14 +244,14 @@ test_api "POST" "/Services/getHydrationRecommendation" '{
     "workout_time": 30.0,
     "height": 170.5,
     "weight": 70.0
-}' '-H "apikey: innosense-api-key-2024" -H "secretkey: innosense-salt-key-2024"' "Hydration Recommendation - Organization API (Expected to Fail)"
+}' "apikey: innosense-api-key-2024" "Hydration Recommendation - Organization API (Expected to Fail)"
 
 # Test 26: Historical Data - Organization API
 test_api "POST" "/Services/getHistoricalData" '{
     "contact": "sgFU5M2NNmvJpwwY7aTqrrv+HUfcaqfkRSjffKP/pE8=",
     "start_date": "2024-01-01",
     "end_date": "2024-12-31"
-}' '-H "apikey: innosense-api-key-2024" -H "secretkey: innosense-salt-key-2024"' "Historical Data - Organization API (Expected to Fail)"
+}' "apikey: innosense-api-key-2024" "Historical Data - Organization API (Expected to Fail)"
 
 # Test 27: Swagger Documentation
 test_api "GET" "/swagger/index.html" "" "" "Swagger Documentation"
